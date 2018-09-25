@@ -42,9 +42,9 @@ class HardCodedClassifier:
         return ""
     
     def predict(self, data_test):
-        prediction = [0 0]
-        #for i in data_test:
-        #    prediction
+        prediction = []
+        for i in data_test:
+            prediction.append(0)
         return prediction           
     
 
