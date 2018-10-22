@@ -38,6 +38,8 @@ def load_car_data(data_path):
                          header = None,
                          names = headers)
     
+    print(df_car.head())
+    
     print("Cars Types Before:\n", df_car.dtypes, "\n")
     
     df_car_np = df_car.values

@@ -1,0 +1,67 @@
+When your assignment is complete, please answer the questions in this text file 
+and upload it to I-Learn.
+
+
+
+1. Please provide the URL of your public GitHub repository.
+
+
+
+
+https://github.com/ksimpkinson/CS450/blob/master/prove02.py
+
+2. Briefly describe your overall approach to the task and highlight the most 
+difficult part of this assignment.
+
+For this assignment I referenced the following site (https://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/) a lot to help me understand more the concept of k-NN. The class assignment last week really helped me, when finding the nearest neighbors by hand, because then I knew the basics. The hard part then was acutally writing efficient code to get the concept to work. I tried writing my own distance formulas by hand, but then found a more efficient one using the numpy library. 
+
+
+
+
+3. Briefly describe your process for handling 
+numeric data on different scales (i.e., normalizing).
+
+
+
+
+I found a very useful function from the sklearn.preprocessing library, called StandardScale, which scaled all the numeric columns for me. I know there are other ways to do this, but those would require a lot more code and a lot more math and calculations.
+
+4. Describe your results for the Iris data set. (For example, what level of accuracy did you see for different values of K?
+
+For the most part the k-NN algorithm was fairly accurate for this data set. I got accuracy values of 95%-100% using different values of K. I found, though that 3 seemed to always work pretty well with this one.
+
+
+
+
+5. How did your implementation compare to existing implementations?
+
+
+
+
+My accuracy was very similary, and a lot of the time the same as the pre-made algorithm. I assume that is because the process that my code is going through is the same that the pre-made algorithm is doing, so the accuracy should be the same.
+
+6. Describe anything you did to go above and beyond the minimum standard requirements.
+
+
+
+
+I completed the required tasks.
+
+7. Please select the category you feel best describes your assignment:
+A - Some attempt was made
+B - Developing, but significantly deficient
+C - Slightly deficient, but still mostly adequate
+D - Meets requirements
+E - Shows creativity and excels above and beyond requirements
+
+
+
+
+D - Meets requirements
+
+
+8. Provide a brief justification (1-2 sentences) for selecting that category.
+
+
+
+I feel I was able to complete fully all the tasks listed for the requirements, but I didn't do anything to go above and beyond.

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/x-icon" href="https://kevinzakka.github.io/assets/favicon.ico">
+    <title>A Complete Guide to K-Nearest-Neighbors with Applications in Python and R</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Academic Journal">
+    <link rel="canonical" href="http://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/">
+    <link href="https://kevinzakka.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Kevin Zakka's Blog posts">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="k-NN%20Explaned_files/main.css">
+
+    <!-- Google Analytics -->
+    <script async="" src="k-NN%20Explaned_files/analytics.js"></script><script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-80187637-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+<script type="text/javascript" async="" src="k-NN%20Explaned_files/embed.js"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.MathJax_Display {text-align: center; margin: 1em 0em; position: relative; display: block!important; text-indent: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; width: 100%}
+.MathJax .merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MathJax .MJX-monospace {font-family: monospace}
+.MathJax .MJX-sans-serif {font-family: sans-serif}
+#MathJax_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true'); padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.MathJax {display: inline; font-style: normal; font-weight: normal; line-height: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; padding: 0; margin: 0}
+.MathJax:focus, body :focus .MathJax {display: inline-table}
+.MathJax.MathJax_FullWidth {text-align: center; display: table-cell!important; width: 10000em!important}
+.MathJax img, .MathJax nobr, .MathJax a {border: 0; padding: 0; margin: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+img.MathJax_strut {border: 0!important; padding: 0!important; margin: 0!important; vertical-align: 0!important}
+.MathJax span {display: inline; position: static; border: 0; padding: 0; margin: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+.MathJax nobr {white-space: nowrap!important}
+.MathJax img {display: inline!important; float: none!important}
+.MathJax * {transition: none; -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none}
+.MathJax_Processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MathJax_Processed {display: none!important}
+.MathJax_ExBox {display: block!important; overflow: hidden; width: 1px; height: 60ex; min-height: 0; max-height: none}
+.MathJax .MathJax_EmBox {display: block!important; overflow: hidden; width: 1px; height: 60em; min-height: 0; max-height: none}
+.MathJax_LineBox {display: table!important}
+.MathJax_LineBox span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+.MathJax .MathJax_HitBox {cursor: text; background: white; opacity: 0; filter: alpha(opacity=0)}
+.MathJax .MathJax_HitBox * {filter: none; opacity: 1; background: transparent}
+#MathJax_Tooltip * {filter: none; opacity: 1; background: transparent}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf?V=2.7.1') format('opentype'); font-weight: bold}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf?V=2.7.1') format('opentype'); font-style: italic}
+@font-face {font-family: MathJax_Math; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf?V=2.7.1') format('opentype'); font-style: italic}
+@font-face {font-family: MathJax_Caligraphic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size1; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size2; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size3; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size4; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf?V=2.7.1') format('opentype')}
+.MathJax .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><link rel="prefetch" as="style" href="k-NN%20Explaned_files/a_data/lounge.css"><link rel="prefetch" as="script" href="k-NN%20Explaned_files/a_data/common.js"><link rel="prefetch" as="script" href="k-NN%20Explaned_files/a_data/lounge.js"><link rel="prefetch" as="script" href="k-NN%20Explaned_files/a_data/config.js"><style type="text/css">@font-face {font-family: MathJax_AMS; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_AMS-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_AMS-Regular.otf?V=2.7.1') format('opentype')}
+</style><script src="k-NN%20Explaned_files/alfalfa.js" async="" charset="UTF-8"></script></head>
+
+
+    <body><div style="visibility: hidden; overflow: hidden; position: absolute; top: 0px; height: 1px; width: auto; padding: 0px; border: 0px none; margin: 0px; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal;"><div id="MathJax_Hidden"></div></div><div id="MathJax_Message" style="display: none;"></div>
+
+    <header class="site-header">
+
+  <div class="wrap">
+
+    <div style="float:left; margin-top:10px; margin-right:10px;">
+    <a href="https://kevinzakka.github.io/feed.xml">
+      <img src="k-NN%20Explaned_files/rssicon.svg" width="40">
+    </a>
+    </div>
+
+    <a class="site-title" href="https://kevinzakka.github.io/">Kevin Zakka's Blog</a>
+    
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"></path>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"></path>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"></path>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="https://kevinzakka.github.io/about/">About</a>
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>A Complete Guide to K-Nearest-Neighbors with Applications in Python and R</h1>
+    <p class="meta">Jul 13, 2016</p>
+  </header>
+
+  <article class="post-content">
+  <div class="imgcap">
+<img src="k-NN%20Explaned_files/row.png" style="border:none;" width="50%"><div class="thecap" style="text-align:center"><a href="http://scott.fortmann-roe.com/docs/BiasVariance.html">Image Courtesy</a></div>
+</div>
+
+<p>This is an in-depth tutorial designed to introduce you to a simple, 
+yet powerful classification algorithm called K-Nearest-Neighbors (KNN). 
+We will go over the intuition and mathematical detail of the algorithm, 
+apply it to a real-world dataset to see exactly how it works, and gain 
+an intrinsic understanding of its inner-workings by writing it from 
+scratch in code. Finally, we will explore ways in which we can improve 
+the algorithm.</p>
+
+<p>For the full code that appears on this page, visit my <a href="https://github.com/kevinzakka/blog-code/">Github Repository</a>.</p>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#what-is-knn">What is KNN?</a></li>
+  <li><a href="#how-does-knn-work">How does KNN work?</a></li>
+  <li><a href="#more-on-k">More on K</a></li>
+  <li><a href="#exploring-knn-in-code">Exploring KNN in Code</a></li>
+  <li><a href="#parameter-tuning-with-cross-validation">Parameter Tuning with Cross Validation</a></li>
+  <li><a href="#writing-our-own-knn-from-scratch">Writing our Own KNN from Scratch</a></li>
+  <li><a href="#pros-and-cons-of-knn">Pros and Cons of KNN</a></li>
+  <li><a href="#improvements">Improvements</a></li>
+  <li><a href="#tutorial-summary">Tutorial Summary</a></li>
+</ol>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>The KNN algorithm is a robust and versatile classifier that is often 
+used as a benchmark for more complex classifiers such as Artificial 
+Neural Networks (ANN) and Support Vector Machines (SVM). Despite its 
+simplicity, KNN can outperform more powerful classifiers and is used in a
+ variety of applications such as economic forecasting, data compression 
+and genetics. For example, KNN was leveraged in a 2006 <a href="http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-S1-S11">study</a> of functional genomics for the assignment of genes based on their expression profiles.</p>
+
+<h2 id="what-is-knn">What is KNN?</h2>
+<p>Let’s first start by establishing some definitions and notations. We will use <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-1-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-1" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mi" id="MathJax-Span-3" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-1">x</script> to denote a <em>feature</em> (aka. predictor, attribute) and <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-2-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-4" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.653em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-5"><span class="mi" id="MathJax-Span-6" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.308em; border-left: 0px solid; width: 0px; height: 0.901em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math></span></span><script type="math/tex" id="MathJax-Element-2">y</script> to denote the <em>target</em> (aka. label, class) we are trying to predict.</p>
+
+<p>KNN falls in the <strong>supervised learning</strong> family of algorithms. Informally, this means that we are given a labelled dataset consiting of training observations <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-3-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-7" style="width: 2.763em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.292em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.385em, 1002.2em, 2.698em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-8"><span class="mo" id="MathJax-Span-9" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-10" style="font-family: MathJax_Math; font-style: italic;">x</span><span class="mo" id="MathJax-Span-11" style="font-family: MathJax_Main;">,</span><span class="mi" id="MathJax-Span-12" style="font-family: MathJax_Math; font-style: italic; padding-left: 0.167em;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span><span class="mo" id="MathJax-Span-13" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.362em; border-left: 0px solid; width: 0px; height: 1.325em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-3">(x,y)</script> and would like to capture the relationship between <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-4-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-14" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-15"><span class="mi" id="MathJax-Span-16" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-4">x</script> and <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-5-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-17" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.653em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-18"><span class="mi" id="MathJax-Span-19" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.308em; border-left: 0px solid; width: 0px; height: 0.901em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math></span></span><script type="math/tex" id="MathJax-Element-5">y</script>. More formally, our goal is to learn a function <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-6-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mo&gt;:&lt;/mo&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x2192;&lt;/mo&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-20" style="width: 5.523em; display: inline-block;"><span style="display: inline-block; position: relative; width: 4.583em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.441em, 1004.58em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-21"><span class="mi" id="MathJax-Span-22" style="font-family: MathJax_Math; font-style: italic;">h</span><span class="mo" id="MathJax-Span-23" style="font-family: MathJax_Main; padding-left: 0.278em;">:</span><span class="mi" id="MathJax-Span-24" style="font-family: MathJax_Math; font-style: italic; padding-left: 0.278em;">X<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.024em;"></span></span><span class="mo" id="MathJax-Span-25" style="font-family: MathJax_Main; padding-left: 0.278em;">→</span><span class="mi" id="MathJax-Span-26" style="font-family: MathJax_Math; font-style: italic; text-rendering: optimizelegibility; padding-left: 0.278em;">Y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.182em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.971em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>h</mi><mo>:</mo><mi>X</mi><mo stretchy="false">→</mo><mi>Y</mi></math></span></span><script type="math/tex" id="MathJax-Element-6">h : X  → Y</script> so that given an unseen observation <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-7-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-27" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-28"><span class="mi" id="MathJax-Span-29" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-7">x</script>, <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-8-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-30" style="width: 2.346em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.927em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.385em, 1001.83em, 2.698em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-31"><span class="mi" id="MathJax-Span-32" style="font-family: MathJax_Math; font-style: italic;">h</span><span class="mo" id="MathJax-Span-33" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-34" style="font-family: MathJax_Math; font-style: italic;">x</span><span class="mo" id="MathJax-Span-35" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.362em; border-left: 0px solid; width: 0px; height: 1.325em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-8">h(x)</script> can confidently predict the corresponding output <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-9-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-36" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.653em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-37"><span class="mi" id="MathJax-Span-38" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.308em; border-left: 0px solid; width: 0px; height: 0.901em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math></span></span><script type="math/tex" id="MathJax-Element-9">y</script>.</p>
+
+<p>The KNN classifier is also a <strong>non parametric</strong> and <strong>instance-based</strong> learning algorithm.</p>
+
+<ul>
+  <li><strong>Non-parametric</strong> means it makes no explicit 
+assumptions about the functional form of h, avoiding the dangers of 
+mismodeling the underlying distribution of the data. For example, 
+suppose our data is highly non-Gaussian but the learning model we choose
+ assumes a Gaussian form. In that case, our algorithm would make 
+extremely poor predictions.</li>
+  <li><strong>Instance-based</strong> learning means that our algorithm 
+doesn’t explicitly learn a model. Instead, it chooses to memorize the 
+training instances which are subsequently used as “knowledge” for the 
+prediction phase. Concretely, this means that only when a query to our 
+database is made (i.e. when we ask it to predict a label given an 
+input), will the algorithm use the training instances to spit out an 
+answer.</li>
+</ul>
+
+<blockquote>
+  <p>KNN is non-parametric, instance-based and used in a supervised learning setting.</p>
+</blockquote>
+
+<p>It is worth noting that the minimal training phase of KNN comes both at a <em>memory cost</em>, since we must store a potentially huge data set, as well as a <em>computational cost</em>
+ during test time since classifying a given observation requires a run 
+down of the whole data set. Practically speaking, this is undesirable 
+since we usually want fast responses.</p>
+
+<blockquote>
+  <p>Minimal training but expensive testing.</p>
+</blockquote>
+
+<h2 id="how-does-knn-work">How does KNN work?</h2>
+<p>In the classification setting, the K-nearest neighbor algorithm 
+essentially boils down to forming a majority vote between the K most 
+similar instances to a given “unseen” observation. Similarity is defined
+ according to a distance metric between two data points. A popular 
+choice is the Euclidean distance given by</p>
+
+<span class="MathJax_Preview" style="color: inherit; display: none;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-10-Frame" tabindex="0" style="text-align: center; position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;&amp;#x2032;&lt;/mo&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;msqrt&gt;&lt;msup&gt;&lt;mrow&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mrow&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msubsup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;&amp;#x2032;&lt;/mo&gt;&lt;/msubsup&gt;&lt;/mrow&gt;&lt;mo&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;msup&gt;&lt;mrow&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mrow&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msubsup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mo&gt;&amp;#x2032;&lt;/mo&gt;&lt;/msubsup&gt;&lt;/mrow&gt;&lt;mo&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mo&gt;&amp;#x2026;&lt;/mo&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;msup&gt;&lt;mrow&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mrow&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msubsup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mo&gt;&amp;#x2032;&lt;/mo&gt;&lt;/msubsup&gt;&lt;/mrow&gt;&lt;mo&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/msqrt&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-39" style="width: 28.596em; display: inline-block;"><span style="display: inline-block; position: relative; width: 23.802em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(0.939em, 1023.8em, 3.051em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-40"><span class="mi" id="MathJax-Span-41" style="font-family: MathJax_Math; font-style: italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-42" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-43" style="font-family: MathJax_Math; font-style: italic;">x</span><span class="mo" id="MathJax-Span-44" style="font-family: MathJax_Main;">,</span><span class="msup" id="MathJax-Span-45" style="padding-left: 0.167em;"><span style="display: inline-block; position: relative; width: 0.841em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-46" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -4.423em; left: 0.572em;"><span class="mo" id="MathJax-Span-47" style="font-size: 70.7%; font-family: MathJax_Main;">′</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-48" style="font-family: MathJax_Main;">)</span><span class="mo" id="MathJax-Span-49" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="msqrt" id="MathJax-Span-50" style="padding-left: 0.278em;"><span style="display: inline-block; position: relative; width: 19.293em; height: 0px;"><span style="position: absolute; clip: rect(2.906em, 1018.27em, 4.473em, -1000em); top: -4.01em; left: 1em;"><span class="mrow" id="MathJax-Span-51"><span class="msubsup" id="MathJax-Span-52"><span style="display: inline-block; position: relative; width: 4.43em; height: 0px;"><span style="position: absolute; clip: rect(3.104em, 1003.91em, 4.473em, -1000em); top: -4.01em; left: 0em;"><span class="mrow" id="MathJax-Span-53"><span class="mo" id="MathJax-Span-54" style=""><span style="font-family: MathJax_Main;">(</span></span><span class="mrow" id="MathJax-Span-55"><span class="msubsup" id="MathJax-Span-56"><span style="display: inline-block; position: relative; width: 1.001em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-57" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -3.86em; left: 0.572em;"><span class="mn" id="MathJax-Span-58" style="font-size: 70.7%; font-family: MathJax_Main;">1</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-59" style="font-family: MathJax_Main; padding-left: 0.222em;">−</span><span class="msubsup" id="MathJax-Span-60" style="padding-left: 0.222em;"><span style="display: inline-block; position: relative; width: 1.001em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-61" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.458em, 1000.27em, 4.136em, -1000em); top: -4.324em; left: 0.572em;"><span class="mo" id="MathJax-Span-62" style="font-size: 70.7%; font-family: MathJax_Main;">′</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.383em, 1000.43em, 4.167em, -1000em); top: -3.704em; left: 0.572em;"><span class="mn" id="MathJax-Span-63" style="font-size: 70.7%; font-family: MathJax_Main;">1</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span></span><span class="mo" id="MathJax-Span-64" style=""><span style="font-family: MathJax_Main;">)</span></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -4.487em; left: 4.001em;"><span class="mn" id="MathJax-Span-65" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-66" style="font-family: MathJax_Main; padding-left: 0.222em;">+</span><span class="msubsup" id="MathJax-Span-67" style="padding-left: 0.222em;"><span style="display: inline-block; position: relative; width: 4.43em; height: 0px;"><span style="position: absolute; clip: rect(3.104em, 1003.91em, 4.473em, -1000em); top: -4.01em; left: 0em;"><span class="mrow" id="MathJax-Span-68"><span class="mo" id="MathJax-Span-69" style=""><span style="font-family: MathJax_Main;">(</span></span><span class="mrow" id="MathJax-Span-70"><span class="msubsup" id="MathJax-Span-71"><span style="display: inline-block; position: relative; width: 1.001em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-72" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -3.86em; left: 0.572em;"><span class="mn" id="MathJax-Span-73" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-74" style="font-family: MathJax_Main; padding-left: 0.222em;">−</span><span class="msubsup" id="MathJax-Span-75" style="padding-left: 0.222em;"><span style="display: inline-block; position: relative; width: 1.001em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-76" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.458em, 1000.27em, 4.136em, -1000em); top: -4.324em; left: 0.572em;"><span class="mo" id="MathJax-Span-77" style="font-size: 70.7%; font-family: MathJax_Main;">′</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.383em, 1000.43em, 4.167em, -1000em); top: -3.704em; left: 0.572em;"><span class="mn" id="MathJax-Span-78" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span></span><span class="mo" id="MathJax-Span-79" style=""><span style="font-family: MathJax_Main;">)</span></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -4.487em; left: 4.001em;"><span class="mn" id="MathJax-Span-80" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-81" style="font-family: MathJax_Main; padding-left: 0.222em;">+</span><span class="mo" id="MathJax-Span-82" style="font-family: MathJax_Main; padding-left: 0.222em;">…</span><span class="mo" id="MathJax-Span-83" style="font-family: MathJax_Main; padding-left: 0.222em;">+</span><span class="msubsup" id="MathJax-Span-84" style="padding-left: 0.222em;"><span style="display: inline-block; position: relative; width: 4.571em; height: 0px;"><span style="position: absolute; clip: rect(3.104em, 1004.05em, 4.417em, -1000em); top: -4.01em; left: 0em;"><span class="mrow" id="MathJax-Span-85"><span class="mo" id="MathJax-Span-86" style="font-family: MathJax_Main;">(</span><span class="mrow" id="MathJax-Span-87"><span class="msubsup" id="MathJax-Span-88"><span style="display: inline-block; position: relative; width: 1.071em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-89" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -3.86em; left: 0.572em;"><span class="mi" id="MathJax-Span-90" style="font-size: 70.7%; font-family: MathJax_Math; font-style: italic;">n</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-91" style="font-family: MathJax_Main; padding-left: 0.222em;">−</span><span class="msubsup" id="MathJax-Span-92" style="padding-left: 0.222em;"><span style="display: inline-block; position: relative; width: 1.071em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.52em, 4.178em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-93" style="font-family: MathJax_Math; font-style: italic;">x</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.458em, 1000.27em, 4.136em, -1000em); top: -4.324em; left: 0.572em;"><span class="mo" id="MathJax-Span-94" style="font-size: 70.7%; font-family: MathJax_Main;">′</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.542em, 1000.5em, 4.174em, -1000em); top: -3.862em; left: 0.572em;"><span class="mi" id="MathJax-Span-95" style="font-size: 70.7%; font-family: MathJax_Math; font-style: italic;">n</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span></span><span class="mo" id="MathJax-Span-96" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -4.487em; left: 4.143em;"><span class="mn" id="MathJax-Span-97" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.581em, 1018.29em, 3.939em, -1000em); top: -4.934em; left: 1em;"><span style="display: inline-block; position: relative; width: 18.293em; height: 0px;"><span style="position: absolute; font-family: MathJax_Main; top: -4.01em; left: -0.084em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; font-family: MathJax_Main; top: -4.01em; left: 17.599em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 0.444em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 0.998em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 1.551em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 2.105em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 2.658em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 3.211em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 3.765em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 4.318em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 4.871em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 5.425em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 5.978em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 6.532em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 7.085em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 7.638em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 8.192em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 8.745em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 9.299em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 9.852em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 10.405em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 10.959em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 11.512em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 12.066em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 12.619em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 13.172em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 13.726em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 14.279em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 14.832em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 15.386em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 15.939em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 16.493em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="font-family: MathJax_Main; position: absolute; top: -4.01em; left: 17.046em;">−<span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(2.704em, 1001.02em, 4.817em, -1000em); top: -4.057em; left: 0em;"><span style="font-family: MathJax_Size2;">√</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.786em; border-left: 0px solid; width: 0px; height: 2.285em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><msup><mi>x</mi><mo>′</mo></msup><mo stretchy="false">)</mo><mo>=</mo><msqrt><msup><mrow><mo>(</mo><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>−</mo><msubsup><mi>x</mi><mn>1</mn><mo>′</mo></msubsup></mrow><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo>(</mo><mrow><msub><mi>x</mi><mn>2</mn></msub><mo>−</mo><msubsup><mi>x</mi><mn>2</mn><mo>′</mo></msubsup></mrow><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><mo>…</mo><mo>+</mo><msup><mrow><mo>(</mo><mrow><msub><mi>x</mi><mi>n</mi></msub><mo>−</mo><msubsup><mi>x</mi><mi>n</mi><mo>′</mo></msubsup></mrow><mo>)</mo></mrow><mn>2</mn></msup></msqrt></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-10">d(x, x') = \sqrt{\left(x_1 - x'_1 \right)^2 + \left(x_2 - x'_2 \right)^2 + \dotsc + \left(x_n - x'_n \right)^2}</script>
+
+<p>but other measures can be more suitable for a given setting and include the Manhattan, Chebyshev and Hamming distance.</p>
+
+<p>More formally, given a positive integer K, an unseen observation <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-11-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-98" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-99"><span class="mi" id="MathJax-Span-100" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-11">x</script> and a similarity metric <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-12-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-101" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.441em, 1000.52em, 2.458em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-102"><span class="mi" id="MathJax-Span-103" style="font-family: MathJax_Math; font-style: italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.074em; border-left: 0px solid; width: 0px; height: 0.97em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>d</mi></math></span></span><script type="math/tex" id="MathJax-Element-12">d</script>, KNN classifier performs the following two steps:</p>
+
+<ul>
+  <li>
+    <p>It runs through the whole dataset computing <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-13-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-104" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.441em, 1000.52em, 2.458em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-105"><span class="mi" id="MathJax-Span-106" style="font-family: MathJax_Math; font-style: italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.074em; border-left: 0px solid; width: 0px; height: 0.97em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>d</mi></math></span></span><script type="math/tex" id="MathJax-Element-13">d</script> between <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-14-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-107" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-108"><span class="mi" id="MathJax-Span-109" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-14">x</script> and each training observation. We’ll call the K points in the training data that are closest to <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-15-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-110" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-111"><span class="mi" id="MathJax-Span-112" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-15">x</script> the set <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-16-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi class=&quot;MJX-tex-caligraphic&quot; mathvariant=&quot;script&quot;&gt;A&lt;/mi&gt;&lt;/mrow&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-113" style="width: 1.044em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.833em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.355em, 1000.83em, 2.446em, -1000em); top: -2.24em; left: 0em;"><span class="mrow" id="MathJax-Span-114"><span class="texatom" id="MathJax-Span-115"><span class="mrow" id="MathJax-Span-116"><span class="mi" id="MathJax-Span-117" style="font-family: MathJax_Caligraphic;">A<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.021em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.24em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.122em; border-left: 0px solid; width: 0px; height: 1.059em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow class="MJX-TeXAtom-ORD"><mi class="MJX-tex-caligraphic" mathvariant="script">A</mi></mrow></math></span></span><script type="math/tex" id="MathJax-Element-16">\mathcal{A}</script>. Note that K is usually odd to prevent tie situations.</p>
+  </li>
+  <li>
+    <p>It then estimates the conditional probability for each class, that is, the fraction of points in <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-17-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi class=&quot;MJX-tex-caligraphic&quot; mathvariant=&quot;script&quot;&gt;A&lt;/mi&gt;&lt;/mrow&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-118" style="width: 1.044em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.833em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.355em, 1000.83em, 2.446em, -1000em); top: -2.24em; left: 0em;"><span class="mrow" id="MathJax-Span-119"><span class="texatom" id="MathJax-Span-120"><span class="mrow" id="MathJax-Span-121"><span class="mi" id="MathJax-Span-122" style="font-family: MathJax_Caligraphic;">A<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.021em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.24em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.122em; border-left: 0px solid; width: 0px; height: 1.059em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow class="MJX-TeXAtom-ORD"><mi class="MJX-tex-caligraphic" mathvariant="script">A</mi></mrow></math></span></span><script type="math/tex" id="MathJax-Element-17">\mathcal{A}</script> with that given class label. (Note <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-18-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;I&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-123" style="width: 2.294em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.875em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.385em, 1001.78em, 2.698em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-124"><span class="mi" id="MathJax-Span-125" style="font-family: MathJax_Math; font-style: italic;">I<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.064em;"></span></span><span class="mo" id="MathJax-Span-126" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-127" style="font-family: MathJax_Math; font-style: italic;">x</span><span class="mo" id="MathJax-Span-128" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.362em; border-left: 0px solid; width: 0px; height: 1.325em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>I</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-18">I(x)</script> is the indicator function which evaluates to <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-19-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-129" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.417em, 1000.45em, 2.396em, -1000em); top: -2.24em; left: 0em;"><span class="mrow" id="MathJax-Span-130"><span class="mn" id="MathJax-Span-131" style="font-family: MathJax_Main;">1</span></span><span style="display: inline-block; width: 0px; height: 2.24em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.063em; border-left: 0px solid; width: 0px; height: 0.924em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>1</mn></math></span></span><script type="math/tex" id="MathJax-Element-19">1</script> when the argument <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-20-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-132" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-133"><span class="mi" id="MathJax-Span-134" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-20">x</script> is true and <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-21-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-135" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.417em, 1000.48em, 2.418em, -1000em); top: -2.24em; left: 0em;"><span class="mrow" id="MathJax-Span-136"><span class="mn" id="MathJax-Span-137" style="font-family: MathJax_Main;">0</span></span><span style="display: inline-block; width: 0px; height: 2.24em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.089em; border-left: 0px solid; width: 0px; height: 0.951em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>0</mn></math></span></span><script type="math/tex" id="MathJax-Element-21">0</script> otherwise)</p>
+  </li>
+</ul>
+
+<span class="MathJax_Preview" style="color: inherit; display: none;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-22-Frame" tabindex="0" style="text-align: center; position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;P&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;|&lt;/mo&gt;&lt;/mrow&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mi&gt;K&lt;/mi&gt;&lt;/mfrac&gt;&lt;munder&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;&amp;#x2208;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi class=&quot;MJX-tex-caligraphic&quot; mathvariant=&quot;script&quot;&gt;A&lt;/mi&gt;&lt;/mrow&gt;&lt;/mrow&gt;&lt;/munder&gt;&lt;mi&gt;I&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-138" style="width: 18.753em; display: inline-block;"><span style="display: inline-block; position: relative; width: 15.625em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(0.793em, 1015.53em, 3.715em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-139"><span class="mi" id="MathJax-Span-140" style="font-family: MathJax_Math; font-style: italic;">P<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.109em;"></span></span><span class="mo" id="MathJax-Span-141" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-142" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span><span class="mo" id="MathJax-Span-143" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mi" id="MathJax-Span-144" style="font-family: MathJax_Math; font-style: italic; padding-left: 0.278em;">j</span><span class="texatom" id="MathJax-Span-145"><span class="mrow" id="MathJax-Span-146"><span class="mo" id="MathJax-Span-147" style="font-family: MathJax_Main;">|</span></span></span><span class="mi" id="MathJax-Span-148" style="font-family: MathJax_Math; font-style: italic;">X<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.024em;"></span></span><span class="mo" id="MathJax-Span-149" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mi" id="MathJax-Span-150" style="font-family: MathJax_Math; font-style: italic; padding-left: 0.278em;">x</span><span class="mo" id="MathJax-Span-151" style="font-family: MathJax_Main;">)</span><span class="mo" id="MathJax-Span-152" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mfrac" id="MathJax-Span-153" style="padding-left: 0.278em;"><span style="display: inline-block; position: relative; width: 1.009em; height: 0px; margin-right: 0.12em; margin-left: 0.12em;"><span style="position: absolute; clip: rect(3.188em, 1000.43em, 4.167em, -1000em); top: -4.687em; left: 50%; margin-left: -0.25em;"><span class="mn" id="MathJax-Span-154" style="font-family: MathJax_Main;">1</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.171em, 1000.89em, 4.167em, -1000em); top: -3.324em; left: 50%; margin-left: -0.445em;"><span class="mi" id="MathJax-Span-155" style="font-family: MathJax_Math; font-style: italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.04em;"></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(0.82em, 1001.01em, 1.198em, -1000em); top: -1.262em; left: 0em;"><span style="display: inline-block; overflow: hidden; vertical-align: 0em; border-top: 1.3px solid; width: 1.009em; height: 0px;"></span><span style="display: inline-block; width: 0px; height: 1.042em;"></span></span></span></span><span class="munderover" id="MathJax-Span-156" style="padding-left: 0.167em;"><span style="display: inline-block; position: relative; width: 1.444em; height: 0px;"><span style="position: absolute; clip: rect(2.904em, 1001.39em, 4.617em, -1000em); top: -4.01em; left: 0em;"><span class="mo" id="MathJax-Span-157" style="font-family: MathJax_Size2; vertical-align: 0em;">∑</span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; clip: rect(3.339em, 1001.3em, 4.302em, -1000em); top: -2.879em; left: 0.075em;"><span class="texatom" id="MathJax-Span-158"><span class="mrow" id="MathJax-Span-159"><span class="mi" id="MathJax-Span-160" style="font-size: 70.7%; font-family: MathJax_Math; font-style: italic;">i</span><span class="mo" id="MathJax-Span-161" style="font-size: 70.7%; font-family: MathJax_Main;">∈</span><span class="texatom" id="MathJax-Span-162"><span class="mrow" id="MathJax-Span-163"><span class="mi" id="MathJax-Span-164" style="font-size: 70.7%; font-family: MathJax_Caligraphic;">A<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.015em;"></span></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mi" id="MathJax-Span-165" style="font-family: MathJax_Math; font-style: italic; padding-left: 0.167em;">I<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.064em;"></span></span><span class="mo" id="MathJax-Span-166" style="font-family: MathJax_Main;">(</span><span class="msubsup" id="MathJax-Span-167"><span style="display: inline-block; position: relative; width: 1.417em; height: 0px;"><span style="position: absolute; clip: rect(3.412em, 1000.5em, 4.372em, -1000em); top: -4.01em; left: 0em;"><span class="mi" id="MathJax-Span-168" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span><span style="position: absolute; top: -4.423em; left: 0.548em;"><span class="texatom" id="MathJax-Span-169"><span class="mrow" id="MathJax-Span-170"><span class="mo" id="MathJax-Span-171" style="font-size: 70.7%; font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-172" style="font-size: 70.7%; font-family: MathJax_Math; font-style: italic;">i</span><span class="mo" id="MathJax-Span-173" style="font-size: 70.7%; font-family: MathJax_Main;">)</span></span></span><span style="display: inline-block; width: 0px; height: 4.01em;"></span></span></span></span><span class="mo" id="MathJax-Span-174" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mi" id="MathJax-Span-175" style="font-family: MathJax_Math; font-style: italic; padding-left: 0.278em;">j</span><span class="mo" id="MathJax-Span-176" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -1.583em; border-left: 0px solid; width: 0px; height: 3.256em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo>=</mo><mi>j</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">|</mo></mrow><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><munder><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>∈</mo><mrow class="MJX-TeXAtom-ORD"><mi class="MJX-tex-caligraphic" mathvariant="script">A</mi></mrow></mrow></munder><mi>I</mi><mo stretchy="false">(</mo><msup><mi>y</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><mi>j</mi><mo stretchy="false">)</mo></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-22">P(y = j | X = x) = \frac{1}{K} \sum_{i \in \mathcal{A}} I(y^{(i)} = j)</script>
+
+<p>Finally, our input <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-23-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-177" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-178"><span class="mi" id="MathJax-Span-179" style="font-family: MathJax_Math; font-style: italic;">x</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.669em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math></span></span><script type="math/tex" id="MathJax-Element-23">x</script> gets assigned to the class with the largest probability.</p>
+
+<blockquote>
+  <p>KNN searches the memorized training observations for the K 
+instances that most closely resemble the new instance and assigns to it 
+the their most common class.</p>
+</blockquote>
+
+<p>An alternate way of understanding KNN is by thinking about it as 
+calculating a decision boundary (i.e. boundaries for more than 2 
+classes) which is then used to classify new points.</p>
+
+<h2 id="more-on-k">More on K</h2>
+<p>At this point, you’re probably wondering how to pick the variable K 
+and what its effects are on your classifier. Well, like most machine 
+learning algorithms, the K in KNN is a hyperparameter that you, as a 
+designer, must pick in order to get the best possible fit for the data 
+set. Intuitively, you can think of K as controlling the shape of the 
+decision boundary we talked about earlier.</p>
+
+<p>When K is small, we are restraining the region of a given prediction 
+and forcing our classifier to be “more blind” to the overall 
+distribution. A small value for K provides the most flexible fit, which 
+will have low bias but high variance. Graphically, our decision boundary
+ will be more jagged.</p>
+
+<p align="center">
+	<img src="k-NN%20Explaned_files/1nearestneigh.png">
+</p>
+
+<p>On the other hand, a higher K averages more voters in each prediction
+ and hence is more resilient to outliers. Larger values of K will have 
+smoother decision boundaries which means lower variance but increased 
+bias.</p>
+
+<p align="center">
+	<img src="k-NN%20Explaned_files/20nearestneigh.png">
+</p>
+
+<p>(If you want to learn more about the bias-variance tradeoff, check out <a href="http://scott.fortmann-roe.com/docs/BiasVariance.html">Scott Roe’s Blog post</a>. You can mess around with the value of K and watch the decision boundary change!)</p>
+
+<h2 id="exploring-knn-in-code">Exploring KNN in Code</h2>
+<p>Without further ado, let’s see how KNN can be leveraged in Python for
+ a classification problem. We’re gonna head over to the UC Irvine 
+Machine Learning Repository, an amazing source for a variety of free and
+ interesting data sets.</p>
+
+<p align="center">
+	<img src="k-NN%20Explaned_files/flower.jpg">
+</p>
+
+<p>The data set we’ll be using is the <a href="https://archive.ics.uci.edu/ml/datasets/Iris">Iris Flower Dataset</a>
+ (IFD) which was first introduced in 1936 by the famous statistician 
+Ronald Fisher and consists of 50 observations from each of three species
+ of Iris (<em>Iris setosa, Iris virginica and Iris versicolor</em>). 
+Four features were measured from each sample: the length and the width 
+of the sepals and petals. Our goal is to train the KNN algorithm to be 
+able to distinguish the species from one another given the measurements 
+of the 4 features.</p>
+
+<p>Go ahead and <code class="highlighter-rouge">Download Data Folder &gt; iris.data</code> and save it in the directory of your choice.</p>
+
+<p>The first thing we need to do is load the data set. It is in CSV format without a header line so we’ll use pandas’ <code class="highlighter-rouge">read_csv</code> function.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># loading libraries</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="c"># define column names</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">'sepal_length'</span><span class="p">,</span> <span class="s">'sepal_width'</span><span class="p">,</span> <span class="s">'petal_length'</span><span class="p">,</span> <span class="s">'petal_width'</span><span class="p">,</span> <span class="s">'class'</span><span class="p">]</span>
+
+<span class="c"># loading training data</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'path/iris.data.txt'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+<p>It’s always a good idea to <code class="highlighter-rouge">df.head()</code> to see how the first few rows of the data frame look like. Also, note that you should replace <code class="highlighter-rouge">'path/iris.data.txt'</code> with that of the directory where you saved the data set.</p>
+
+<p>Next, it would be cool if we could plot the data before rushing into 
+classification so that we can have a deeper understanding of the problem
+ at hand. R has a beautiful visualization tool called <code class="highlighter-rouge">ggplot2</code> that we will use to create 2 quick scatter plots of <strong>sepal width vs sepal length</strong> and <strong>petal width vs petal length</strong>.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ============================== R code ==============================</span><span class="w">
+</span><span class="c1"># loading packages</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">magrittr</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># sepal width vs. sepal length</span><span class="w">
+</span><span class="n">iris</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Sepal.Length</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">Sepal.Width</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">Species</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_point</span><span class="p">()</span><span class="w">
+
+</span><span class="c1"># petal width vs. petal length</span><span class="w">
+</span><span class="n">iris</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+  </span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">Species</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_point</span><span class="p">()</span><span class="w">
+</span><span class="c1"># =====================================================================</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Note that we’ve accessed the <code class="highlighter-rouge">iris</code> dataframe which comes preloaded in R by default.</p>
+
+<p align="center">
+	<img src="k-NN%20Explaned_files/sep_plot.png">
+</p>
+
+<p align="center">
+	<img src="k-NN%20Explaned_files/pet_plot.png">
+</p>
+
+<p>A quick study of the above graphs reveals some strong classification 
+criterion. We observe that setosas have small petals, versicolor have 
+medium sized petals and virginica have the largest petals. Furthermore, 
+setosas seem to have shorter and wider sepals than the other two 
+classes. Pretty interesting right? Without even using an algorithm, 
+we’ve managed to intuitively construct a classifier that can perform 
+pretty well on the dataset.</p>
+
+<p>Now, it’s time to get our hands wet. We’ll be using <code class="highlighter-rouge">scikit-learn</code> to train a KNN classifier and evaluate its performance on the data set using the 4 step modeling pattern:</p>
+
+<ol>
+  <li>Import the learning algorithm</li>
+  <li>Instantiate the model</li>
+  <li>Learn the model</li>
+  <li>Predict the response</li>
+</ol>
+
+<p><code class="highlighter-rouge">scikit-learn</code> requires that the design matrix <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-24-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-180" style="width: 1.044em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.833em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.452em, 1000.83em, 2.448em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-181"><span class="mi" id="MathJax-Span-182" style="font-family: MathJax_Math; font-style: italic;">X<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.024em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.063em; border-left: 0px solid; width: 0px; height: 0.945em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>X</mi></math></span></span><script type="math/tex" id="MathJax-Element-24">X</script> and target vector <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-25-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-183" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.653em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-184"><span class="mi" id="MathJax-Span-185" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.308em; border-left: 0px solid; width: 0px; height: 0.901em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math></span></span><script type="math/tex" id="MathJax-Element-25">y</script>
+ be numpy arrays so let’s oblige. Furthermore, we need to split our data
+ into training and test sets. The following code does just that.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># loading libraries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c"># create design matrix X and target vector y</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> 	<span class="c"># end index is exclusive</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'class'</span><span class="p">])</span> 	<span class="c"># another way of indexing a pandas df</span>
+
+<span class="c"># split into train and test</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Finally, following the above modeling pattern, we define our 
+classifer, in this case KNN, fit it to our training data and evaluate 
+its accuracy. We’ll be using an arbitrary K but we will see later on how
+ cross validation can be used to find its optimal value.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># loading library</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+
+<span class="c"># instantiate learning model (k = 3)</span>
+<span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c"># fitting the model</span>
+<span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c"># predict the response</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c"># evaluate accuracy</span>
+<span class="k">print</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="parameter-tuning-with-cross-validation">Parameter Tuning with Cross Validation</h2>
+<p>In this section, we’ll explore a method that can be used to <em>tune</em> the hyperparameter K.</p>
+
+<p>Obviously, the best K is the one that corresponds to the lowest test 
+error rate, so let’s suppose we carry out repeated measurements of the 
+test error for different values of K. Inadvertently, what we are doing 
+is using the <code class="highlighter-rouge">test set</code> as a <code class="highlighter-rouge">training set</code>!
+ This means that we are underestimating the true error rate since our 
+model has been forced to fit the test set in the best possible manner. 
+Our model is then incapable of generalizing to newer observations, a 
+process known as <strong>overfitting</strong>. Hence, touching the test set is out of the question and must only be done at the very end of our pipeline.</p>
+
+<blockquote>
+  <p>Using the test set for hyperparameter tuning can lead to overfitting.</p>
+</blockquote>
+
+<p>An alternative and smarter approach involves estimating the test error rate by holding out a subset of the <code class="highlighter-rouge">training set</code> from the fitting process. This subset, called the <code class="highlighter-rouge">validation set</code>,
+ can be used to select the appropriate level of flexibility of our 
+algorithm! There are different validation approaches that are used in 
+practice, and we will be exploring one of the more popular ones called <strong>k-fold cross validation</strong>.</p>
+
+<p align="center">
+	<img src="k-NN%20Explaned_files/k_fold_cv.jpg">
+</p>
+
+<p>As seen in the image, k-fold cross validation (<em>the k is totally unrelated to K</em>)
+ involves randomly dividing the training set into k groups, or folds, of
+ approximately equal size. The first fold is treated as a validation 
+set, and the method is fit on the remaining <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-26-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-186" style="width: 2.711em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.24em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.441em, 1002.17em, 2.53em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-187"><span class="mi" id="MathJax-Span-188" style="font-family: MathJax_Math; font-style: italic;">k</span><span class="mo" id="MathJax-Span-189" style="font-family: MathJax_Main; padding-left: 0.222em;">−</span><span class="mn" id="MathJax-Span-190" style="font-family: MathJax_Main; padding-left: 0.222em;">1</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.161em; border-left: 0px solid; width: 0px; height: 1.056em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi><mo>−</mo><mn>1</mn></math></span></span><script type="math/tex" id="MathJax-Element-26">k − 1</script>
+ folds. The misclassification rate is then computed on the observations 
+in the held-out fold. This procedure is repeated k times; each time, a 
+different group of observations is treated as a validation set. This 
+process results in k estimates of the test error which are then averaged
+ out.</p>
+
+<blockquote>
+  <p>Cross-validation can be used to estimate the test error associated 
+with a learning method in order to evaluate its performance, or to 
+select the appropriate level of flexibility.</p>
+</blockquote>
+
+<p>If that is a bit overwhelming for you, don’t worry about it. We’re 
+gonna make it clearer by performing a 10-fold cross validation on our 
+dataset using a generated list of odd K’s ranging from 1 to 50.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># creating odd list of K for KNN</span>
+<span class="n">myList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">50</span><span class="p">))</span>
+
+<span class="c"># subsetting just the odd ones</span>
+<span class="n">neighbors</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">myList</span><span class="p">)</span>
+
+<span class="c"># empty list that will hold cv scores</span>
+<span class="n">cv_scores</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c"># perform 10-fold cross validation</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+    <span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">knn</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s">'accuracy'</span><span class="p">)</span>
+    <span class="n">cv_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</code></pre></div></div>
+<p>Again, scikit-learn comes in handy with its <code class="highlighter-rouge">cross_val_score()</code> method. We specifiy that we are performing 10 folds with the <code class="highlighter-rouge">cv=10</code> parameter and that our scoring metric should be <code class="highlighter-rouge">accuracy</code> since we are in a classification setting.</p>
+
+<p>Finally, we plot the misclassification error versus K.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># changing to misclassification error</span>
+<span class="n">MSE</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cv_scores</span><span class="p">]</span>
+
+<span class="c"># determining best k</span>
+<span class="n">optimal_k</span> <span class="o">=</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">MSE</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">MSE</span><span class="p">))]</span>
+<span class="k">print</span> <span class="s">"The optimal number of neighbors is </span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="n">optimal_k</span>
+
+<span class="c"># plot misclassification error vs k</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">neighbors</span><span class="p">,</span> <span class="n">MSE</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Number of Neighbors K'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Misclassification Error'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+<p align="center">
+	<img src="k-NN%20Explaned_files/cv_knn.png">
+</p>
+
+<p>10-fold cross validation tells us that <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-27-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;K&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;7&lt;/mn&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-191" style="width: 3.284em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.708em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.452em, 1002.69em, 2.47em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-192"><span class="mi" id="MathJax-Span-193" style="font-family: MathJax_Math; font-style: italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.04em;"></span></span><span class="mo" id="MathJax-Span-194" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mn" id="MathJax-Span-195" style="font-family: MathJax_Main; padding-left: 0.278em;">7</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.089em; border-left: 0px solid; width: 0px; height: 0.971em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>K</mi><mo>=</mo><mn>7</mn></math></span></span><script type="math/tex" id="MathJax-Element-27">K = 7</script> results in the lowest validation error.</p>
+
+<h2 id="writing-our-own-knn-from-scratch">Writing our Own KNN from Scratch</h2>
+<p>So far, we’ve studied how KNN works and seen how we can use it for a 
+classification task using scikit-learn’s generic pipeline (i.e. input, 
+instantiate, train, predict and evaluate). Now, it’s time to delve 
+deeper into KNN by trying to code it ourselves from scratch.</p>
+
+<p>A machine learning algorithm usually consists of 2 main blocks:</p>
+
+<ul>
+  <li>
+    <p>a <strong>training</strong> block that takes as input the training data <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-28-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-196" style="width: 1.044em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.833em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.452em, 1000.83em, 2.448em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-197"><span class="mi" id="MathJax-Span-198" style="font-family: MathJax_Math; font-style: italic;">X<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.024em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.063em; border-left: 0px solid; width: 0px; height: 0.945em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>X</mi></math></span></span><script type="math/tex" id="MathJax-Element-28">X</script> and the corresponding target <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-29-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-199" style="width: 0.628em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.521em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.693em, 1000.52em, 2.653em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-200"><span class="mi" id="MathJax-Span-201" style="font-family: MathJax_Math; font-style: italic;">y<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.006em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.308em; border-left: 0px solid; width: 0px; height: 0.901em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math></span></span><script type="math/tex" id="MathJax-Element-29">y</script> and outputs a learned model <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-30-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-202" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.441em, 1000.55em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-203"><span class="mi" id="MathJax-Span-204" style="font-family: MathJax_Math; font-style: italic;">h</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.971em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>h</mi></math></span></span><script type="math/tex" id="MathJax-Element-30">h</script>.</p>
+  </li>
+  <li>
+    <p>a <strong>predict</strong> block that takes as input new and unseen observations and uses the function <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-31-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-205" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.573em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.441em, 1000.55em, 2.459em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-206"><span class="mi" id="MathJax-Span-207" style="font-family: MathJax_Math; font-style: italic;">h</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.076em; border-left: 0px solid; width: 0px; height: 0.971em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>h</mi></math></span></span><script type="math/tex" id="MathJax-Element-31">h</script> to output their corresponding responses.</p>
+  </li>
+</ul>
+
+<p>In the case of KNN, which as discussed earlier, is a lazy algorithm, 
+the training block reduces to just memorizing the training data. Let’s 
+go ahead a write a python method that does so.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+	<span class="c"># do nothing </span>
+	<span class="k">return</span>
+</code></pre></div></div>
+
+<p>Gosh, that was hard! Now we need to write the predict method which 
+must do the following: it needs to compute the euclidean distance 
+between the “new” observation and all the data points in the training 
+set. It must then select the K nearest ones and perform a majority vote.
+ It then assigns the corresponding label to the observation. Let’s go 
+ahead and write that.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+	<span class="c"># create list for distances and targets</span>
+	<span class="n">distances</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">targets</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">)):</span>
+		<span class="c"># first we compute the euclidean distance</span>
+		<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x_test</span> <span class="o">-</span> <span class="n">X_train</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])))</span>
+		<span class="c"># add it to list of distances</span>
+		<span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">distance</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
+
+	<span class="c"># sort the list</span>
+	<span class="n">distances</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+
+	<span class="c"># make a list of the k neighbors' targets</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_train</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
+	<span class="c"># return most common target</span>
+	<span class="k">return</span> <span class="n">Counter</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+</code></pre></div></div>
+<p>In the above code, we create an array of <em>distances</em> which we 
+sort by increasing order. That way, we can grab the K nearest neighbors 
+(first K distances), get their associated labels which we store in the <em>targets</em> array, and finally perform a majority vote using a <em>Counter</em>.</p>
+
+<p>Putting it all together, we can define the function KNearestNeighbor,
+ which loops over every test example and makes a prediction.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">kNearestNeighbor</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+	<span class="c"># train on the input data</span>
+	<span class="n">train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+	<span class="c"># loop over all observations</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)):</span>
+		<span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">k</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Let’s go ahead and run our algorithm with the optimal K we found using cross-validation.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># making our predictions </span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">kNearestNeighbor</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+<span class="c"># transform the list into an array</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+<span class="c"># evaluating accuracy</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">The accuracy of our classifier is </span><span class="si">%</span><span class="s">d</span><span class="si">%%</span><span class="s">'</span> <span class="o">%</span> <span class="n">accuracy</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+</code></pre></div></div>
+<p><span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-32-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mn&gt;98&lt;/mn&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x0025;&lt;/mi&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-208" style="width: 2.19em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.823em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.333em, 1001.77em, 2.452em, -1000em); top: -2.24em; left: 0em;"><span class="mrow" id="MathJax-Span-209"><span class="mn" id="MathJax-Span-210" style="font-family: MathJax_Main;">98</span><span class="mi" id="MathJax-Span-211" style="font-family: MathJax_Main;">%</span></span><span style="display: inline-block; width: 0px; height: 2.24em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.13em; border-left: 0px solid; width: 0px; height: 1.092em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>98</mn><mi mathvariant="normal">%</mi></math></span></span><script type="math/tex" id="MathJax-Element-32">98\%</script> accuracy! We’re as good as scikit-learn’s algorithm, but probably less efficient. Let’s try again with a value of <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-33-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;K&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;140&lt;/mn&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-212" style="width: 4.482em; display: inline-block;"><span style="display: inline-block; position: relative; width: 3.698em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.452em, 1003.66em, 2.47em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-213"><span class="mi" id="MathJax-Span-214" style="font-family: MathJax_Math; font-style: italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.04em;"></span></span><span class="mo" id="MathJax-Span-215" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mn" id="MathJax-Span-216" style="font-family: MathJax_Main; padding-left: 0.278em;">140</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.089em; border-left: 0px solid; width: 0px; height: 0.971em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>K</mi><mo>=</mo><mn>140</mn></math></span></span><script type="math/tex" id="MathJax-Element-33">K = 140</script>. We get an <code class="highlighter-rouge">IndexError: list index out of range</code>
+ error. In fact, K can’t be arbitrarily large since we can’t have more 
+neighbors than the number of observations in the training data set. So 
+let’s fix our code to safeguard against such an error. Using <code class="highlighter-rouge">try, except</code> we can write the following code.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">kNearestNeighbor</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+	<span class="c"># check if k larger than n</span>
+	<span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="nb">ValueError</span>
+		
+	<span class="c"># train on the input data</span>
+	<span class="n">train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+	<span class="c"># predict for each testing observation</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)):</span>
+		<span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">k</span><span class="p">))</span>
+
+<span class="c"># making our predictions </span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">try</span><span class="p">:</span>
+	<span class="n">kNearestNeighbor</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+	<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+	<span class="c"># evaluating accuracy</span>
+	<span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+	<span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">The accuracy of OUR classifier is </span><span class="si">%</span><span class="s">d</span><span class="si">%%</span><span class="s">'</span> <span class="o">%</span> <span class="n">accuracy</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span>
+	<span class="k">print</span><span class="p">(</span><span class="s">'Can</span><span class="se">\'</span><span class="s">t have more neighbors than training samples!!'</span><span class="p">)</span>
+</code></pre></div></div>
+<p>That’s it, we’ve just written our first machine learning algorithm from scratch!</p>
+
+<h2 id="pros-and-cons-of-knn">Pros and Cons of KNN</h2>
+
+<h4 id="pros">Pros</h4>
+
+<p>As you can already tell from the previous section, one of the most 
+attractive features of the K-nearest neighbor algorithm is that is 
+simple to understand and easy to implement. With zero to little training
+ time, it can be a useful tool for off-the-bat analysis of some data set
+ you are planning to run more complex algorithms on. Furthermore, KNN 
+works just as easily with multiclass data sets whereas other algorithms 
+are hardcoded for the binary setting. Finally, as we mentioned earlier, 
+the non-parametric nature of KNN gives it an edge in certain settings 
+where the data may be highly “unusual”.</p>
+
+<h4 id="cons">Cons</h4>
+
+<p>One of the obvious drawbacks of the KNN algorithm is the 
+computationally expensive testing phase which is impractical in industry
+ settings. Note the rigid dichotomy between KNN and the more 
+sophisticated Neural Network which has a lengthy training phase albeit a
+ <strong>very fast</strong> testing phase. Furthermore, KNN can suffer 
+from skewed class distributions. For example, if a certain class is very
+ frequent in the training set, it will tend to dominate the majority 
+voting of the new example (large number = more common). Finally, the 
+accuracy of KNN can be severely degraded with high-dimension data 
+because there is little difference between the nearest and farthest 
+neighbor.</p>
+
+<h2 id="improvements">Improvements</h2>
+<p>With that being said, there are many ways in which the KNN algorithm can be improved.</p>
+
+<ul>
+  <li>A simple and effective way to remedy skewed class distributions is by implementing <strong>weighed voting</strong>.
+ The class of each of the K neighbors is multiplied by a weight 
+proportional to the inverse of the distance from that point to the given
+ test point. This ensures that nearer neighbors contribute more to the 
+final vote than the more distant ones.</li>
+  <li><strong>Changing the distance metric</strong> for different applications may help improve the accuracy of the algorithm. (i.e. Hamming distance for text classification)</li>
+  <li><strong>Rescaling your data</strong> makes the distance metric more meaningful. For instance, given 2 features <code class="highlighter-rouge">height</code> and <code class="highlighter-rouge">weight</code>, an observation such as <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-34-Frame" tabindex="0" style="position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;[&lt;/mo&gt;&lt;mn&gt;180&lt;/mn&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mn&gt;70&lt;/mn&gt;&lt;mo stretchy=&quot;false&quot;&gt;]&lt;/mo&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-217" style="width: 6.513em; display: inline-block;"><span style="display: inline-block; position: relative; width: 5.417em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.385em, 1005.3em, 2.698em, -1000em); top: -2.292em; left: 0em;"><span class="mrow" id="MathJax-Span-218"><span class="mi" id="MathJax-Span-219" style="font-family: MathJax_Math; font-style: italic;">x</span><span class="mo" id="MathJax-Span-220" style="font-family: MathJax_Main; padding-left: 0.278em;">=</span><span class="mo" id="MathJax-Span-221" style="font-family: MathJax_Main; padding-left: 0.278em;">[</span><span class="mn" id="MathJax-Span-222" style="font-family: MathJax_Main;">180</span><span class="mo" id="MathJax-Span-223" style="font-family: MathJax_Main;">,</span><span class="mn" id="MathJax-Span-224" style="font-family: MathJax_Main; padding-left: 0.167em;">70</span><span class="mo" id="MathJax-Span-225" style="font-family: MathJax_Main;">]</span></span><span style="display: inline-block; width: 0px; height: 2.292em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.362em; border-left: 0px solid; width: 0px; height: 1.325em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>=</mo><mo stretchy="false">[</mo><mn>180</mn><mo>,</mo><mn>70</mn><mo stretchy="false">]</mo></math></span></span><script type="math/tex" id="MathJax-Element-34">x = [180, 70]</script>
+ will clearly skew the distance metric in favor of height. One way of 
+fixing this is by column-wise subtracting the mean and dividing by the 
+standard deviation. Scikit-learn’s <code class="highlighter-rouge">normalize()</code> method can come in handy.</li>
+  <li><strong>Dimensionality reduction</strong> techniques like PCA should be executed prior to appplying KNN and help make the distance metric more meaningful.</li>
+  <li><strong>Approximate Nearest Neighbor</strong> techniques such as using <em>k-d trees</em>
+ to store the training observations can be leveraged to decrease testing
+ time. Note however that these methods tend to perform poorly in high 
+dimensions (20+). Try using <strong>locality sensitive hashing (LHS)</strong> for higher dimensions.</li>
+</ul>
+
+<h2 id="tutorial-summary">Tutorial Summary</h2>
+
+<p>In this tutorial, we learned about the K-Nearest Neighbor algorithm, 
+how it works and how it can be applied in a classification setting using
+ scikit-learn. We also implemented the algorithm in Python from scratch 
+in such a way that we understand the inner-workings of the algorithm. We
+ even used R to create visualizations to further understand our data. 
+Finally, we explored the pros and cons of KNN and the many improvements 
+that can be made to adapt it to different project settings.</p>
+
+<p>If you want to practice some more with the algorithm, try and run it on the <strong>Breast Cancer Wisconsin</strong>
+ dataset which you can find in the UC Irvine Machine Learning 
+repository. You’ll need to preprocess the data carefully this time. Do 
+it once with scikit-learn’s algorithm and a second time with our version
+ of the code but try adding the weighted distance implementation.</p>
+
+<h2 id="references">References</h2>
+
+<h4 id="notes">Notes</h4>
+<ul>
+  <li>Stanfords <strong>CS231n</strong> notes on KNN. click <a href="http://cs231n.github.io/classification/#nn">here</a></li>
+  <li>Wikipedia’s KNN page - click <a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">here</a></li>
+  <li>Introduction to Statistical Learning with Applications in R, Chapters <strong>2</strong> and <strong>3</strong> - click <a href="http://www-bcf.usc.edu/~gareth/ISL/">here</a></li>
+  <li>Detailed Introduction to KNN - click <a href="https://saravananthirumuruganathan.wordpress.com/2010/05/17/a-detailed-introduction-to-k-nearest-neighbor-knn-algorithm/">here</a></li>
+</ul>
+
+<h4 id="resources">Resources</h4>
+<ul>
+  <li>Scikit-learn’s documentation for KNN - click <a href="http://scikit-learn.org/stable/modules/neighbors.html">here</a></li>
+  <li>Data wrangling and visualization with pandas and matplotlib from Chris Albon - click <a href="http://chrisalbon.com/">here</a></li>
+  <li>Intro to machine learning with scikit-learn (Great resource!) - click <a href="https://github.com/justmarkham/scikit-learn-videos">here</a></li>
+</ul>
+
+<p>Thank you for reading my guide, and I hope it helps you in theory and in practice!</p>
+
+  </article>
+
+  <!-- mathjax -->
+  
+  <script src="k-NN%20Explaned_files/MathJax.js" id=""></script>
+  
+    
+  <!-- disqus comments -->
+ 
+ <div id="disqus_thread"><iframe id="dsq-app2293" name="dsq-app2293" allowtransparency="true" scrolling="no" tabindex="0" title="Disqus" style="width: 1px !important; min-width: 100% !important; border: medium none !important; overflow: hidden !important; height: 5534px !important;" src="k-NN%20Explaned_files/a.htm" horizontalscrolling="no" verticalscrolling="no" width="100%" frameborder="0"></iframe></div>
+  <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'kevinzakka'; // required: replace example with your forum shortname
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="<a class="vglnk" href="http://disqus.com/?ref_noscript" rel="nofollow"><span>http</span><span>://</span><span>disqus</span><span>.</span><span>com</span><span>/?</span><span>ref</span><span>_</span><span>noscript</span></a>">comments powered by Disqus.</a></noscript>
+  
+  
+  
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <!-- <h2 class="footer-heading">Kevin Zakka's Blog</h2> -->
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>Kevin Zakka's Blog</li>
+        <!-- <li><a href="mailto:"></a></li> -->
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/kevinzakka">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path>
+              </svg>
+            </span>
+            <span class="username">kevinzakka</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/kevin_zakka">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"></path>
+              </svg>
+            </span>
+            <span class="username">kevin_zakka</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">Academic Journal</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    
+<div style="position: absolute; width: 0px; height: 0px; overflow: hidden; padding: 0px; border: 0px none; margin: 0px;"><div id="MathJax_Font_Test" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: auto; padding: 0px; border: 0px none; margin: 0px; white-space: nowrap; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; font-size: 40px; font-weight: normal; font-style: normal; font-size-adjust: none; font-family: MathJax_Caligraphic, sans-serif;"></div></div><iframe style="display: none;"></iframe></body></html>

@@ -1,0 +1,1 @@
+I will be working with Blake Cromar and Jordan Tway. We will be implementing a text prediction model, hopefully with a GUI, and if we have time adding on autocorrection as a bonus.

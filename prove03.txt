@@ -1,0 +1,73 @@
+When your assignment is complete, please answer the questions in this text file and upload it to I-Learn.
+
+
+
+1. Please provide the URL of your public GitHub repository.
+
+
+
+https://github.com/ksimpkinson/CS450/blob/master/prove03.py
+
+2. What was the most difficult part of this assignment?
+
+
+
+The most difficult part for me was figuring out the syntax of the cross validation function. I understood the  theory behind it, but had a difficult time figuring out the details and specifics of working the function.
+
+3. Briefly describe your process for handling non-numeric data.
+I used a label encoder to assign an integer to each non-numeric object in a category.
+
+
+
+
+4. Briefly describe your process for missing data.
+
+
+
+The data that was missing was fairly miniscule compared to the rest of the dataset so I decided to not inslude it in my test.
+
+5. Describe your results for the Car Evaluation dataset.
+
+
+
+I had a 64% accuracy for this dataset, and it was actually the first one I got to work.
+
+6. Describe your results for the Autism dataset.
+
+
+
+This dataset had a 90% accuracy, which is a lot better than the car dataset.
+
+7. Describe your results for the Automobile MPG dataset.
+
+
+
+This dataset only had a 2% accuracy, which is strange. I will need to take another look at the algorithms to see if I am missing something somewhere.
+
+8. Describe anything you did to go above and beyond the minimum standard requirements.
+
+
+
+I just accomplished the minimum standards
+
+9. Please select the category you feel best describes your assignment:
+
+A - Some attempt was made
+
+B - Developing, but significantly deficient
+
+C - Slightly deficient, but still mostly adequate
+
+D - Meets requirements
+
+E - Shows creativity and excels above and beyond requirements
+
+
+
+
+(D - Meets requirements)
+
+10. Provide a brief justification (1-2 sentences) for selecting that category.
+
+
+I believe I was able to accomplish the minimum requirements for this assignment, and with research and trial and error I feel that I now understand the syntax cross validation a lot more and would be able to teach it to someone else.

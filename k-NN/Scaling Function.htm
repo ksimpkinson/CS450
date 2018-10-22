@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>K-Nearest Neighbors Algorithm in Python and Scikit-Learn</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	<!-- fav icons -->
+	<!--<link rel="shortcut icon" href="/assets/images/favicon.ico?v=a1a49a4526">-->
+	<link rel="apple-touch-icon" href="https://stackabuse.com/assets/images/apple-touch-icon.png?v=a1a49a4526">
+	<link rel="apple-touch-icon" sizes="72x72" href="https://stackabuse.com/assets/images/apple-touch-icon-72x72.png?v=a1a49a4526">
+	<link rel="apple-touch-icon" sizes="114x114" href="https://stackabuse.com/assets/images/apple-touch-icon-114x114.png?v=a1a49a4526">
+	<!-- stylesheets -->
+    <link href="Scaling%20Function_files/css.css" rel="stylesheet">
+	<link rel="stylesheet" href="Scaling%20Function_files/bootstrap.css">
+	<link rel="stylesheet" href="Scaling%20Function_files/font-awesome.css">
+	<link rel="stylesheet" type="text/css" href="Scaling%20Function_files/screen.css">
+	<link rel="stylesheet" type="text/css" href="Scaling%20Function_files/atom_one_dark.css">
+	<link rel="stylesheet" href="Scaling%20Function_files/morris.css">
+	<script src="Scaling%20Function_files/osd.js"></script><script src="Scaling%20Function_files/ca-pub-5704119028142803.js"></script><script async="" src="Scaling%20Function_files/analytics.js"></script><script>
+/*====================================================
+  THEME SETTINGS & GLOBAL VARIABLES
+====================================================*/
+//  1. Disqus comment settings
+var disqus_shortname = 'stackabuse'; // required: replace example with your forum shortname
+
+//	2. Sidebar Position
+var sidebar_left = false; // Set true or flase for positioning sidebar on left
+
+//  3. Recent Post count
+var recent_post_count = 3;
+
+//	4. Google+ badge settings
+var badge_type = 'page'; // person / page / community ----- three type of google badge
+var google_plus_url = 'https://plus.google.com/111813546240107028721';
+
+//	5. Facebook Page Setting
+var facebook_page_url = 'https://www.facebook.com/stackabuse';
+
+//	6. Twitter Setting
+var twitter_url = 'https://twitter.com/ScottWRobinson';
+var twitter_widget_id = '722928793669607425';
+var number_of_tweet = 3;
+
+//	7. Mailchimp signup form Setting
+var mailchimp_form_url = '//stackabuse.us10.list-manage.com/subscribe/post?u=90b216fdbe02b25619ec94fc3&amp;id=bc2bb312cd';
+var success_message = "Please check your inbox and confirm your email address. Thank you!";
+
+//	8. Flickr Setting
+//var flickr_id = '52617155@N08';
+var flickr_id = '';
+
+// 9. Adsense Channels
+var adsense_tag_to_channel_name = {
+    'node': 'sa-topic-node-js',
+    'javascript': 'sa-topic-javascript',
+    'python': 'sa-topic-python',
+    'java': 'sa-topic-java',
+    'machine learning': 'sa-topic-machine-learning',
+    'artificial intelligence': 'sa-topic-ai',
+    'tensorflow': 'sa-topic-tensorflow',
+    'scikit-learn': 'sa-topic-scikit-learn',
+    'algorithms': 'sa-topic-algorithms',
+    'data structures': 'sa-topic-data-structures',
+    'aws': 'sa-topic-aws',
+    'apache': 'sa-topic-apache',
+    'django': 'sa-topic-django',
+    'flask': 'sa-topic-flask',
+    'shell': 'sa-topic-shell',
+    'bash': 'sa-topic-bash',
+    'npm': 'sa-topic-npm',
+    'unix': 'sa-topic-unix',
+    'linux': 'sa-topic-linux',
+    'json': 'sa-topic-json',
+    'maven': 'sa-topic-maven',
+    'web framework': 'sa-topic-web-framework',
+    'security': 'sa-topic-security',
+    'arduino': 'sa-topic-arduino',
+    'express': 'sa-topic-express-js',
+    'es6': 'sa-topic-es6',
+    'mongodb': 'sa-topic-mongodb',
+    'how to': 'sa-topic-how-to',
+};
+var adsense_author_to_channel_name = {
+    'Scott Robinson': 'sa-author-scott-robinson',
+    'Frank Hofmann': 'sa-author-frank-hofmann',
+    'Adam McQuistan': 'sa-author-adam-mcquistan',
+    'Tendai Mutunhire': 'sa-author-tendai-mutunhire',
+    'Guest Contributor': 'sa-author-guest-contributor',
+    'Mihajlo Pavloski': 'sa-author-mihajlo-pavloski',
+    'Esther Vaati': 'sa-author-esther-vaati',
+    'Adnan Rahic': 'sa-author-adnan-rahic',
+    'Sam Galizia': 'sa-author-sam-galizia',
+};
+var adsense_channel_name_to_id = {
+    'sa-author-scott-robinson': '5091228512',
+    'sa-author-frank-hofmann': '5574923176',
+    'sa-author-adam-mcquistan': '5470502461',
+    'sa-author-tendai-mutunhire': '4157420794',
+    'sa-author-guest-contributor': '9218175780',
+    'sa-author-mihajlo-pavloski': '2081921796',
+    'sa-author-esther-vaati': '9026604091',
+    'sa-author-adnan-rahic': '5829595117',
+    'sa-author-sam-galizia': '1890350103',
+    'sa-topic-node-js': '9234966588',
+    'sa-topic-javascript': '4871736666',
+    'sa-topic-python': '6017776300',
+    'sa-topic-java': '4704694632',
+    'sa-topic-machine-learning': '2618830613',
+    'sa-topic-ai': '7679585600',
+    'sa-topic-tensorflow': '2325943302',
+    'sa-topic-scikit-learn': '8801095589',
+    'sa-topic-algorithms': '9664898345',
+    'sa-topic-data-structures': '8884856065',
+    'sa-topic-aws': '6294351744',
+    'sa-topic-apache': '4220999970',
+    'sa-topic-django': '2399338763',
+    'sa-topic-flask': '3357197212',
+    'sa-topic-shell': '7386698293',
+    'sa-topic-bash': '6588621943',
+    'sa-topic-npm': '8417952206',
+    'sa-topic-unix': '4912578190',
+    'sa-topic-linux': '4029428281',
+    'sa-topic-json': '7104870536',
+    'sa-topic-maven': '2286414858',
+    'sa-topic-web-framework': '4321551251',
+    'sa-topic-security': '8660251512',
+    'sa-topic-arduino': '2649376939',
+    'sa-topic-express-js': '3008469582',
+    'sa-topic-es6': '3447453289',
+    'sa-topic-mongodb': '9382306243',
+    'sa-topic-how-to': '5443061231',
+    'sa-position-sidebar-top': '9190734552',
+    'sa-position-sidebar-middle': '5600217174',
+    'sa-position-sidebar-bottom': '3770886911',
+    'sa-position-content-top': '4789698384',
+    'sa-position-content-middle': '7686081194',
+    'sa-position-content-bottom': '4576223195',
+};
+</script>    <link rel="canonical" href="Scaling%20Function_files/a_005.htm">
+    <meta name="referrer" content="origin-when-cross-origin">
+    
+    <meta property="og:site_name" content="Stack Abuse">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="K-Nearest Neighbors Algorithm in Python and Scikit-Learn">
+    <meta property="og:description" content="The K-nearest neighbors (KNN) algorithm is a type of supervised machine learning algorithms. KNN is extremely easy to implement in its most basic form, and yet performs quite complex classification tasks. It is a lazy learning algorithm since it doesn't have a specialized training phase. Rather, it uses all of">
+    <meta property="og:url" content="https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/">
+    <meta property="article:published_time" content="2018-02-15T16:21:07.000Z">
+    <meta property="article:modified_time" content="2018-02-15T20:57:18.000Z">
+    <meta property="article:tag" content="python">
+    <meta property="article:tag" content="scikit-learn">
+    <meta property="article:tag" content="machine learning">
+    <meta property="article:tag" content="algorithms">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="K-Nearest Neighbors Algorithm in Python and Scikit-Learn">
+    <meta name="twitter:description" content="The K-nearest neighbors (KNN) algorithm is a type of supervised machine learning algorithms. KNN is extremely easy to implement in its most basic form, and yet performs quite complex classification tasks. It is a lazy learning algorithm since it doesn't have a specialized training phase. Rather, it uses all of">
+    <meta name="twitter:url" content="https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Scott Robinson">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="python, scikit-learn, machine learning, algorithms">
+    <meta name="twitter:site" content="@ScottWRobinson">
+    <meta name="twitter:creator" content="@ScottWRobinson">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Stack Abuse",
+        "logo": "https://stackabuse.com/ghost/img/ghosticon.jpg"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Scott Robinson",
+        "image": "https://stackabuse.com/content/images/2016/09/new-profile.jpg",
+        "url": "https://stackabuse.com/author/scott/",
+        "sameAs": [
+            "https://github.com/ScottWRobinson",
+            "https://twitter.com/ScottWRobinson"
+        ]
+    },
+    "headline": "K-Nearest Neighbors Algorithm in Python and Scikit-Learn",
+    "url": "https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/",
+    "datePublished": "2018-02-15T16:21:07.000Z",
+    "dateModified": "2018-02-15T20:57:18.000Z",
+    "keywords": "python, scikit-learn, machine learning, algorithms",
+    "description": "The K-nearest neighbors (KNN) algorithm is a type of supervised machine learning algorithms. KNN is extremely easy to implement in its most basic form, and yet performs quite complex classification tasks. It is a lazy learning algorithm since it doesn&#x27;t have a specialized training phase. Rather, it uses all of"
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.9">
+    <link rel="alternate" type="application/rss+xml" title="Stack Abuse" href="https://stackabuse.com/rss/">
+    <script type="text/javascript" src="Scaling%20Function_files/jquery.js"></script>
+<script type="text/javascript" async="" src="Scaling%20Function_files/bsa.js"></script><script type="text/javascript" async="" src="Scaling%20Function_files/embed.js"></script><script async="" type="text/javascript" src="Scaling%20Function_files/count.js"></script><style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><script src="Scaling%20Function_files/count-data.js"></script><link rel="prefetch" as="style" href="Scaling%20Function_files/a_data_003/lounge.css"><link rel="prefetch" as="script" href="Scaling%20Function_files/a_data_003/common.js"><link rel="prefetch" as="script" href="Scaling%20Function_files/a_data_003/lounge.js"><link rel="prefetch" as="script" href="Scaling%20Function_files/a_data_003/config.js"><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><script type="text/javascript" id="_bsap_js_023d86b911cfb66415b9b7bd3a3267b4" src="Scaling%20Function_files/s_023d86b911cfb66415b9b7bd3a3267b4.js" async="async"></script><script type="text/javascript" src="Scaling%20Function_files/pro.js" id="_bsap_premium_pro"></script><script type="text/javascript" id="_bsaPRO_js" src="Scaling%20Function_files/a" async="async"></script><link rel="preload" href="Scaling%20Function_files/integrator.js" as="script"><script type="text/javascript" src="Scaling%20Function_files/integrator.js"></script><script src="Scaling%20Function_files/alfalfa.js" async="" charset="UTF-8"></script></head>
+<body class="post-template tag-python tag-scikit-learn tag-machine-learning tag-algorithms"><div id="MathJax_Message" style="display: none;"></div>
+    <!-- <style type="text/css" media="screen">
+         div#banner { 
+           color: #ffffff;
+           position: fixed;
+           top: 0;
+           left: 0;
+           background-color: #404040;
+           width: 100%;
+           z-index: 1;
+         }
+         div#banner-content { 
+           width: 100%; 
+           margin: 0 auto; 
+           padding: 5px; 
+         }
+         .btn-primary-outline {
+           color: #ffffff;
+           background-color: transparent;
+           border-color: #ffffff;
+           border-radius: 3px;
+         }
+         .btn-primary-outline:hover {
+           color: #cccccc;
+           background-color: transparent;
+           border-color: #ffffff;
+           border-radius: 3px;
+         }
+    </style>
+    <div id="banner">
+        <div id="banner-content" class="text-center">
+            <span style="margin-right: 10px;">Post your job to 500K+ developers for only $99</span>
+            <a class="btn btn-lg btn-primary-outline" href="#"
+                data-toggle="modal"
+                data-target="#jobModal"
+                ga-on="click"
+                ga-event-category="Jobs"
+                ga-event-action="Click"
+                ga-event-label="Stack-Abuse-Post-Job"
+            >
+                <span class="glyphicon glyphicon-briefcase"></span>
+                &nbsp;
+                Post a Job
+            </a>
+        </div>
+    </div> -->
+
+	<nav class="navbar navbar-default navbar-static-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <i class="fa fa-bars"></i>
+      </button>
+      <a class="navbar-brand" href="https://stackabuse.com/">Stack <span style="color:#f16334;">Abuse</span></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+	<li class="nav-home" role="presentation"><a href="https://stackabuse.com/">Home</a></li>
+	<li class="nav-nodejs" role="presentation"><a href="https://stackabuse.com/tag/node/">Node.js</a></li>
+	<li class="nav-python" role="presentation"><a href="https://stackabuse.com/tag/python">Python</a></li>
+	<li class="nav-java" role="presentation"><a href="https://stackabuse.com/tag/java/">Java</a></li>
+	<li class="nav-write-for-us" role="presentation"><a href="https://stackabuse.com/write-for-us/">Write for Us</a></li>
+	<li class="nav-learn-nodejs" role="presentation"><a href="https://stackabuse.com/learn-node-js-a-beginners-guide/">Learn Node.js</a></li>
+</ul>
+      <!--<ul class="nav navbar-nav pull-right">
+        <li role="presentation">
+          <a class="btn btn-success nav-btn" href="http://jobs.stackabuse.com">Find a Job</a>
+        </li>
+        <li role="presentation">
+          <a class="btn btn-danger nav-btn" href="http://jobs.stackabuse.com/post">Post a Job</a>
+        </li>
+      </ul>-->
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>
+    <!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = '//s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+	<!-- start site's main content area -->
+<section class="content-wrap">
+	<div class="container">
+		<div class="row">
+			<!-- start main post area -->
+			<div class="col-md-8 main-content">
+				<!-- start post -->
+				<article id="171" class="post tag-python tag-scikit-learn tag-machine-learning tag-algorithms">
+					<div class="post-head">
+						<h2 class="post-title">K-Nearest Neighbors Algorithm in Python and Scikit-Learn</h2>
+						<div class="post-meta">
+							<span class="author">
+                                By
+                                <a rel="nofollow" target="_blank" href="https://twitter.com/ScottWRobinson">
+                                    <i class="fa fa-twitter" style="color:#55acee;"></i>
+                                    Scott Robinson
+                                </a>
+                            </span> •
+							<span class="date">February 15, 2018</span> •
+							<span class="comment-count"><a href="https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/#disqus_thread">4 Comments</a></span>
+						</div>
+					</div>
+                    <div class="post-ad">
+                        <!-- BuySellAds Zone Code -->
+<div id="bsap_1307307" class="bsap bsap_1307307" data-serve="CKYD65QU">
+<style type="text/css">
+div.bsap_1307307{width:100%;display:block;}div.bsap_1307307 a{width:728px;}div.bsap_1307307 a img{padding:0;}div.bsap_1307307 a em{font-style:normal;}div.bsap_1307307 a{display:block;font-size:11px;color:#888;font-family:verdana,sans-serif;margin:0;text-align:center;text-decoration:none;overflow:hidden;float:left;}
+div.bsap_1307307 img{border:0;clear:right;}
+div.bsap_1307307 a.adhere{color:#666;font-weight:bold;font-size:12px;border:1px solid #ccc;background:#e7e7e7;text-align:center;}
+div.bsap_1307307 a.adhere:hover{border:1px solid #999;background:#ddd;color:#333;}
+div.bsap_1307307 iframe{display:block;font-size:11px;color:#888;font-family:verdana,sans-serif;margin:0;text-align:center;text-decoration:none;overflow:hidden;float:left;}div.bsap_1307307 a{line-height:100%;}div.bsap_1307307 a.adhere{width:728px;height:90px;line-height:720%;}html>body div.bsap_1307307 a.adhere{width:726px;height:88px;}div.bsap_1307307 img.s{height:0;width:0;}div.bsap_1307307{line-height:9px;}div.bsap_1307307 .bsap_adhere2,div.bsap_1307307 iframe{float:left;}div.bsap_1307307 .bsap_adhere2 a{height:90px;width:20px;background:url(http:\/\/s3.buysellads.com\/ac\/ah20x90_1.gif) no-repeat 0 0;text-indent:-9999px;}
+</style>
+<!--INLINE-->
+<style>
+    #bsa-content-header { width: 728px; height: 90px; }
+</style>
+<script type="text/javascript" id="auto_1" class="ignoreme" src="Scaling%20Function_files/adsbygoogle.js"></script>
+<!-- sa-responsive-content-top -->
+<ins id="bsa-content-header" class="adsbygoogle" style="display: inline-block; width: 690px; height: 90px;" data-ad-client="ca-pub-5704119028142803" data-ad-slot="6304666171" data-page-url="http://stackabuse.com" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:690px;background-color:transparent;"><ins id="aswift_0_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:690px;background-color:transparent;"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;width:690px;height:90px;" width="690" height="90" frameborder="0"></iframe></ins></ins></ins>
+<script type="text/javascript" id="auto_2" class="ignoreme">
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script type="text/javascript" id="auto_3" class="ignoreme"> if (typeof(_bsap_serving_callback) !== 'undefined') _bsap_serving_callback(73194, 'CKYD65QU', ''); </script>
+<script type="text/javascript" id="auto_4" class="ignoreme"> if (typeof(BSACallback) !== 'undefined') BSACallback(); </script></div>
+<!-- End BuySellAds Zone Code -->                    </div>
+					<div class="post-content">
+						<p>The K-nearest neighbors (KNN) algorithm is a type of supervised machine learning algorithms. <a rel="nofollow" target="_blank" href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">KNN</a>
+ is extremely easy to implement in its most basic form, and yet performs
+ quite complex classification tasks. It is a lazy learning algorithm 
+since it doesn't have a specialized training phase. Rather, it uses all 
+of the data for training while classifying a new data point or instance.
+ KNN is a non-parametric learning algorithm, which means that it doesn't
+ assume anything about the underlying data. This is an extremely useful 
+feature since most of the real world data doesn't really follow any 
+theoretical assumption e.g. linear-separability, uniform distribution, 
+etc.</p>
+
+<p>In this article, we will see how KNN can be implemented with Python's <a href="https://stackabuse.com/tag/scikit-learn/">Scikit-Learn</a> library. But before that let's first explore the theory behind KNN and see what are some of the pros and cons of the algorithm.</p>
+
+<h3 id="theory">Theory</h3>
+
+<p>The intuition behind the KNN algorithm is one of the simplest of all 
+the supervised machine learning algorithms. It simply calculates the 
+distance of a new data point to all other training data points. The 
+distance can be of any type e.g Euclidean or Manhattan etc. It then 
+selects the K-nearest data points, where K can be any integer. Finally 
+it assigns the data point to the class to which the majority of the K 
+data points belong.</p>
+
+<p>Let's see this algorithm in action with the help of a simple example.
+ Suppose you have a dataset with two variables, which when plotted, 
+looks like the one in the following figure.</p>
+
+<p><img class="img-responsive" alt="Datapoint plot" src="Scaling%20Function_files/k-nearest-neighbors-algorithm-python-scikit-learn-1.png"></p>
+
+<p>Your task is to classify a new data point with 'X' into "Blue" class 
+or "Red" class. The coordinate values of the data point are x=45 and 
+y=50. Suppose the value of K is 3. The KNN algorithm starts by 
+calculating the distance of point X from all the points. It then finds 
+the 3 nearest points with least distance to point X. This is shown in 
+the figure below. The three nearest points have been encircled.</p>
+
+<p><img class="img-responsive" alt="Datapoint plot circled" src="Scaling%20Function_files/k-nearest-neighbors-algorithm-python-scikit-learn-2.png"></p>
+
+<p>The final step of the KNN algorithm is to assign new point to the 
+class to which majority of the three nearest points belong. From the 
+figure above we can see that the two of the three nearest points belong 
+to the class "Red" while one belongs to the class "Blue". Therefore the 
+new data point will be classified as "Red".</p>
+
+<h3 id="prosandconsofknn">Pros and Cons of KNN</h3>
+
+<p>In this section we'll present some of the pros and cons of using the KNN algorithm.</p>
+
+<h4 id="pros">Pros</h4>
+
+<ol>
+<li>It is extremely easy to implement  </li>
+<li>As said earlier, it is <a rel="nofollow" target="_blank" href="https://en.wikipedia.org/wiki/Lazy_learning">lazy learning</a>
+ algorithm and therefore requires no training prior to making real time 
+predictions. This makes the KNN algorithm much faster than  other 
+algorithms that require training e.g SVM, <a href="https://stackabuse.com/linear-regression-in-python-with-scikit-learn/">linear regression</a>, etc.  </li>
+<li>Since the algorithm requires no training before making predictions, new data can be added seamlessly.  </li>
+<li>There are only two parameters required to implement KNN i.e. the 
+value of K and the distance function (e.g. Euclidean or Manhattan etc.)</li>
+</ol>
+
+<h4 id="cons">Cons</h4>
+
+<ol>
+<li>The KNN algorithm doesn't work well with high dimensional data 
+because with large number of dimensions, it becomes difficult for the 
+algorithm to calculate distance in each dimension.  </li>
+<li>The KNN algorithm has a high prediction cost for large datasets. 
+This is because in large datasets the cost of calculating distance 
+between new point and each existing point becomes higher.  </li>
+<li>Finally, the KNN algorithm doesn't work well with categorical 
+features since it is difficult to find the distance between dimensions 
+with categorical features.</li>
+</ol>
+
+<h3 id="implementingknnalgorithmwithscikitlearn">Implementing KNN Algorithm with Scikit-Learn</h3>
+
+<p>In this section, we will see how Python's Scikit-Learn library can be
+ used to implement the KNN algorithm in less than 20 lines of code. The 
+download and installation instructions for Scikit learn library are 
+available at <a rel="nofollow" target="_blank" href="http://scikit-learn.org/stable/install.html">here</a>.</p>
+
+<p><strong>Note</strong>: The code provided in this tutorial has been executed and tested with Python Jupyter notebook.</p>
+
+<h4 id="thedataset">The Dataset</h4>
+
+<p>We are going to use the famous iris data set for our KNN example. The
+ dataset consists of four attributes: sepal-width, sepal-length, 
+petal-width and petal-length. These are the attributes of specific types
+ of iris plant. The task is to predict the class to which these plants 
+belong. There are three classes in the dataset: Iris-setosa, 
+Iris-versicolor and Iris-virginica. Further details of the dataset are 
+available <a rel="nofollow" target="_blank" href="https://archive.ics.uci.edu/ml/datasets/iris4">here</a>.</p><div class="adsense adsense--loaded"><ins data-ad-client="ca-pub-5704119028142803" data-ad-slot="7177772785" class="adsbygoogle" data-adsbygoogle-status="done" style="width: 728px; height: 90px;"><ins id="aswift_5_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent;"><ins id="aswift_5_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent;"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_5" name="aswift_5" style="left:0;position:absolute;top:0;width:728px;height:90px;" width="728" height="90" frameborder="0"></iframe></ins></ins></ins><p class="adsense__loading"><span>Loading…</span></p></div>
+
+<h4 id="importinglibraries">Importing Libraries</h4>
+
+<pre><code class="language-python hljs"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np  
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt  
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd  
+</code></pre>
+
+<h4 id="importingthedataset">Importing the Dataset</h4>
+
+<p>To import the dataset and load it into our pandas dataframe, execute the following code:</p>
+
+<pre><code class="language-python hljs">url = <span class="hljs-string">"<a class="vglnk" href="https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data" rel="nofollow"><span>https</span><span>://</span><span>archive</span><span>.</span><span>ics</span><span>.</span><span>uci</span><span>.</span><span>edu</span><span>/</span><span>ml</span><span>/</span><span>machine</span><span>-</span><span>learning</span><span>-</span><span>databases</span><span>/</span><span>iris</span><span>/</span><span>iris</span><span>.</span><span>data</span></a>"</span>
+
+<span class="hljs-comment"># Assign colum names to the dataset</span>
+names = [<span class="hljs-string">'sepal-length'</span>, <span class="hljs-string">'sepal-width'</span>, <span class="hljs-string">'petal-length'</span>, <span class="hljs-string">'petal-width'</span>, <span class="hljs-string">'Class'</span>]
+
+<span class="hljs-comment"># Read dataset to pandas dataframe</span>
+dataset = pd.read_csv(url, names=names)  
+</code></pre>
+
+<p>To see what the dataset actually looks like, execute the following command:</p>
+
+<pre><code class="language-python hljs">dataset.head()  
+</code></pre>
+
+<p>Executing the above script will display the first five rows of our dataset as shown below:</p>
+
+<table class="table table-striped">  
+    <thead>
+        <tr>
+            <th></th>
+            <th>sepal-length</th>
+            <th>sepal-width</th>
+            <th>petal-length</th>
+            <th>petal-width</th>
+            <th>Class</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>0</th>
+            <td>5.1</td>
+            <td>3.5</td>
+            <td>1.4</td>
+            <td>0.2</td>
+            <td>Iris-setosa</td>
+        </tr>
+        <tr>
+            <th>1</th>
+            <td>4.9</td>
+            <td>3.0</td>
+            <td>1.4</td>
+            <td>0.2</td>
+            <td>Iris-setosa</td>
+        </tr>
+        <tr>
+            <th>2</th>
+            <td>4.7</td>
+            <td>3.2</td>
+            <td>1.3</td>
+            <td>0.2</td>
+            <td>Iris-setosa</td>
+        </tr>
+        <tr>
+            <th>3</th>
+            <td>4.6</td>
+            <td>3.1</td>
+            <td>1.5</td>
+            <td>0.2</td>
+            <td>Iris-setosa</td>
+        </tr>
+        <tr>
+            <th>4</th>
+            <td>5.0</td>
+            <td>3.6</td>
+            <td>1.4</td>
+            <td>0.2</td>
+            <td>Iris-setosa</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="preprocessing">Preprocessing</h4>
+
+<p>The next step is to split our dataset into its attributes and labels. To do so, use the following code:</p>
+
+<pre><code class="language-python hljs">X = dataset.iloc[:, :-<span class="hljs-number">1</span>].values  
+y = dataset.iloc[:, <span class="hljs-number">4</span>].values  
+</code></pre>
+
+<p>The <code>X</code> variable contains the first four columns of the dataset (i.e. attributes) while <code>y</code> contains the labels.</p>
+
+<h4 id="traintestsplit">Train Test Split</h4>
+
+<p>To avoid over-fitting, we will divide our dataset into training and 
+test splits, which gives us a better idea as to how our algorithm 
+performed during the testing phase. This way our algorithm is tested on 
+un-seen data, as it would be in a production application.</p>
+
+<p>To create training and test splits, execute the following script:</p>
+
+<pre><code class="language-python hljs"><span class="hljs-keyword">from</span> sklearn.model_selection <span class="hljs-keyword">import</span> train_test_split  
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="hljs-number">0.20</span>)  
+</code></pre>
+
+<p>The above script splits the dataset into 80% train data and 20% test 
+data. This means that out of total 150 records, the training set will 
+contain 120 records and the test set contains 30 of those records.</p>
+
+<h4 id="featurescaling">Feature Scaling</h4>
+
+<p>Before making any actual predictions, it is always a good practice to
+ scale the features so that all of them can be uniformly evaluated. <a rel="nofollow" target="_blank" href="https://en.wikipedia.org/wiki/Feature_scaling#Motivation">Wikipedia</a> explains the reasoning pretty well:</p><div class="adsense adsense--loaded"><ins data-ad-client="ca-pub-5704119028142803" data-ad-slot="7177772785" class="adsbygoogle" data-adsbygoogle-status="done" style="width: 728px; height: 90px;"><ins id="aswift_3_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent;"><ins id="aswift_3_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent;"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_3" name="aswift_3" style="left:0;position:absolute;top:0;width:728px;height:90px;" width="728" height="90" frameborder="0"></iframe></ins></ins></ins><p class="adsense__loading"><span>Loading…</span></p></div>
+
+<blockquote>
+  <p>Since the range of values of raw data varies widely, in some 
+machine learning algorithms, objective functions will not work properly 
+without normalization. For example, the majority of classifiers 
+calculate the distance between two points by the Euclidean distance. If 
+one of the features has a broad range of values, the distance will be 
+governed by this particular feature. Therefore, the range of all 
+features should be normalized so that each feature contributes 
+approximately proportionately to the final distance.</p>
+</blockquote>
+
+<p>The gradient descent algorithm (which is used in neural network 
+training and other machine learning algorithms) also converges faster 
+with normalized features.</p>
+
+<p>The following script performs feature scaling:</p>
+
+<pre><code class="language-python hljs"><span class="hljs-keyword">from</span> sklearn.preprocessing <span class="hljs-keyword">import</span> StandardScaler  
+scaler = StandardScaler()  
+scaler.fit(X_train)
+
+X_train = scaler.transform(X_train)  
+X_test = scaler.transform(X_test)  
+</code></pre>
+
+<h4 id="trainingandpredictions">Training and Predictions</h4>
+
+<p>It is extremely straight forward to train the KNN algorithm and make predictions with it, especially when using Scikit-Learn.</p>
+
+<pre><code class="language-python hljs"><span class="hljs-keyword">from</span> sklearn.neighbors <span class="hljs-keyword">import</span> KNeighborsClassifier  
+classifier = KNeighborsClassifier(n_neighbors=<span class="hljs-number">5</span>)  
+classifier.fit(X_train, y_train)  
+</code></pre>
+
+<p>The first step is to import the <code>KNeighborsClassifier</code> class from the <code>sklearn.neighbors</code> library. In the second line, this class is initialized with one parameter, i.e. <code>n_neigbours</code>.
+ This is basically the value for the K. There is no ideal value for K 
+and it is selected after testing and evaluation, however to start out, 5
+ seems to be the most commonly used value for KNN algorithm.</p>
+
+<p>The final step is to make predictions on our test data. To do so, execute the following script:</p>
+
+<pre><code class="language-python hljs">y_pred = classifier.predict(X_test)  
+</code></pre>
+
+<h4 id="evaluatingthealgorithm">Evaluating the Algorithm</h4>
+
+<p>For evaluating an algorithm, confusion matrix, precision, recall and f1 score are the most commonly used metrics. The <code>confusion_matrix</code> and <code>classification_report</code> methods of the <code>sklearn.metrics</code> can be used to calculate these metrics. Take a look at the following script:</p>
+
+<pre><code class="language-python hljs"><span class="hljs-keyword">from</span> sklearn.metrics <span class="hljs-keyword">import</span> classification_report, confusion_matrix  
+print(confusion_matrix(y_test, y_pred))  
+print(classification_report(y_test, y_pred))  
+</code></pre>
+
+<p>The output of the above script looks like this:</p>
+
+<pre><code class="hljs">[[11  0  0]
+   0 13  0]
+   0  1  6]]
+                 precision   recall   f1-score   support
+
+    Iris-setosa       1.00     1.00       1.00        11
+Iris-versicolor       1.00     1.00       1.00        13  
+ Iris-virginica       1.00     1.00       1.00         6
+
+    avg / total       1.00     1.00       1.00        30
+</code></pre>
+
+<p>The results show that our KNN algorithm was able to classify all the 
+30 records in the test set with 100% accuracy, which is excellent. 
+Although the algorithm performed very well with this dataset, don't 
+expect the same results with all applications. As noted earlier, KNN 
+doesn't always perform as well with high-dimensionality or categorical 
+features.</p>
+
+<h3 id="comparingerrorratewiththekvalue">Comparing Error Rate with the K Value</h3>
+
+<p>In the training and prediction section we said that there is no way 
+to know beforehand which value of K that yields the best results in the 
+first go. We randomly chose 5 as the K value and it just happen to 
+result in 100% accuracy.</p>
+
+<p>One way to help you find the best value of K is to plot the graph of K value and the corresponding error rate for the dataset.</p>
+
+<p>In this section, we will plot the mean error for the predicted values of test set for all the K values between 1 and 40.</p><div class="adsense adsense--loaded"><ins data-ad-client="ca-pub-5704119028142803" data-ad-slot="7177772785" class="adsbygoogle" data-adsbygoogle-status="done" style="width: 728px; height: 90px;"><ins id="aswift_4_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent;"><ins id="aswift_4_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent;"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_4" name="aswift_4" style="left:0;position:absolute;top:0;width:728px;height:90px;" width="728" height="90" frameborder="0"></iframe></ins></ins></ins><p class="adsense__loading"><span>Loading…</span></p></div>
+
+<p>To do so, let's first calculate the mean of error for all the 
+predicted values where K ranges from 1 and 40. Execute the following 
+script:</p>
+
+<pre><code class="language-python hljs">error = []
+
+<span class="hljs-comment"># Calculating error for K values between 1 and 40</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>, <span class="hljs-number">40</span>):  
+    knn = KNeighborsClassifier(n_neighbors=i)
+    knn.fit(X_train, y_train)
+    pred_i = knn.predict(X_test)
+    error.append(np.mean(pred_i != y_test))
+</code></pre>
+
+<p>The above script executes a loop from 1 to 40. In each iteration the 
+mean error for predicted values of test set is calculated and the result
+ is appended to the <code>error</code> list.</p>
+
+<p>The next step is to plot the <code>error</code> values against K values. Execute the following script to create the plot:</p>
+
+<pre><code class="language-python hljs">plt.figure(figsize=(<span class="hljs-number">12</span>, <span class="hljs-number">6</span>))  
+plt.plot(range(<span class="hljs-number">1</span>, <span class="hljs-number">40</span>), error, color=<span class="hljs-string">'red'</span>, linestyle=<span class="hljs-string">'dashed'</span>, marker=<span class="hljs-string">'o'</span>,  
+         markerfacecolor=<span class="hljs-string">'blue'</span>, markersize=<span class="hljs-number">10</span>)
+plt.title(<span class="hljs-string">'Error Rate K Value'</span>)  
+plt.xlabel(<span class="hljs-string">'K Value'</span>)  
+plt.ylabel(<span class="hljs-string">'Mean Error'</span>)  
+</code></pre>
+
+<p>The output graph looks like this:</p>
+
+<p><img class="img-responsive" alt="K Value Error Rate" src="Scaling%20Function_files/k-nearest-neighbors-algorithm-python-scikit-learn-3.png"></p>
+
+<p>From the output we can see that the mean error is zero when the value
+ of the K is between 5 and 18. I would advise you to play around with 
+the value of K to see how it impacts the accuracy of the predictions.</p>
+
+<h3 id="resources">Resources</h3>
+
+<p>Want to learn more about Scikit-Learn and other useful machine 
+learning algorithms? I'd recommend checking out some more detailed 
+resources, like an online course:</p>
+
+<ul>
+<li><a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/python-data-science-machine-learning-bootcamp" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">Python for Data Science and Machine Learning Bootcamp</a></li>
+<li><a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/machine-learning-hands-on-python-data-science" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">Machine Learning A-Z: Hands-On Python &amp; R In Data Science</a></li>
+<li><a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/data-science-python-pandas-sklearn-numpy" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">Data Science in Python, Pandas, Scikit-learn, Numpy, Matplotlib</a></li>
+</ul>
+
+<p>While reading blog posts like this is a great start, most people 
+typically learn better with the visuals, resources, and explanations 
+from courses like those linked above.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>KNN is a simple yet powerful classification algorithm. It requires no
+ training for making predictions, which is typically one of the most 
+difficult parts of a machine learning algorithm. The KNN algorithm have 
+been widely used to find document similarity and pattern recognition. It
+ has also been employed for developing recommender systems and for 
+dimensionality reduction and pre-processing steps for computer vision, 
+particularly face recognition tasks.</p>
+
+<p>From here, I would advise you to implement the KNN algorithm for a 
+different classification dataset. Vary the test and training size along 
+with the K value to see how your results differ and how can you improve 
+the accuracy of your algorithm. A good collection of classification 
+datasets is available <a rel="nofollow" target="_blank" href="https://archive.ics.uci.edu/ml/datasets.html?format=&amp;task=cla&amp;att=&amp;area=&amp;numAtt=&amp;numIns=&amp;type=&amp;sort=nameUp&amp;view=table">here</a> for you to play with.</p>
+
+<p><em>What other applications have you applied the KNN algorithm to? How did it work out for you? Let us know in the comments!</em></p>
+					</div>
+					<footer class="post-footer clearfix">
+						<div class="pull-left tag-list">
+							<i class="fa fa-folder-open-o"></i>
+							<a href="https://stackabuse.com/tag/python/">python</a>,<a href="https://stackabuse.com/tag/scikit-learn/">scikit-learn</a>,<a href="https://stackabuse.com/tag/machine-learning/">machine learning</a>,<a href="https://stackabuse.com/tag/algorithms/">algorithms</a>
+						</div>
+						<div class="pull-right share">
+							<div>
+	<ul class="share-icons">
+		<!-- twitter -->
+		<li>
+			<a href="https://twitter.com/share?text=K-Nearest%20Neighbors%20Algorithm%20in%20Python%20and%20Scikit-Learn&amp;url=https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"><i class="fa fa-twitter" style="color:#55acee;"></i></a>
+		</li>
+		<!-- facebook -->
+		<li>
+			<a href="https://www.facebook.com/sharer/sharer.php?u=https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"><i class="fa fa-facebook" style="color:#3b5998;"></i></a>
+		</li>
+		<!-- google plus -->
+		<li>
+			<a href="https://plus.google.com/share?url=https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;"><i class="fa fa-google-plus" style="color:#dc4e41;"></i></a>
+		</li>
+		<!-- linkedin -->
+		<li>
+			<a href="https://www.linkedin.com/shareArticle?mini=true%26url=https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/%26source=https://stackabuse.com" onclick="window.open(this.href, 'linkedin-share', 'width=490,height=530');return false;"><i class="fa fa-linkedin" style="color:#0077b5;"></i></a>
+		</li>
+	</ul>
+</div>						</div>
+					</footer>
+                    <!-- start about the author -->
+<div class="about-author clearfix">
+		<a href="https://stackabuse.com/author/scott/"><img src="Scaling%20Function_files/new-profile.jpg" alt="Author image" class="avatar pull-left"></a>
+	<div class="details">
+		<div class="author">
+			About <a href="https://stackabuse.com/author/scott/">Scott Robinson</a>
+		</div>
+		<div class="meta-info" style="font-style: normal;">
+			<span>
+                <i class="fa fa-twitter" style="color:#55acee;"></i>
+                <a rel="nofollow" href="https://twitter.com/ScottWRobinson" target="_BLANK">Twitter</a>
+            </span>
+            <span>
+                <i class="fa fa-github" style="color:#333333;"></i>
+                <a rel="nofollow" href="https://github.com/ScottWRobinson" target="_BLANK">Github</a>
+            </span>
+		</div>
+	</div>
+</div>
+<!-- end about the author -->				</article>
+                <!-- start newsletter section -->
+<div class="section">
+    <div class="newsletter text-center">
+        <h4 class="title">Subscribe to our Newsletter</h4>
+        <div class="content">
+            <p>Occasional articles in your inbox. Unsubscribe at any time.</p>
+            <div id="mc_embed_signup">
+                <form action="//stackabuse.us10.list-manage.com/subscribe/post?u=90b216fdbe02b25619ec94fc3&amp;amp;id=bc2bb312cd" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="form-inline validate" novalidate="" target="_blank">
+                    <div class="row">
+                        <div class="col-md-7 col-md-offset-1 col-xs-12">
+                            <input name="EMAIL" class="form-control input-lg required email" id="mce-EMAIL" placeholder="Enter your email..." style="width:100%;" type="email">
+                        </div>
+                        <div class="col-md-4 col-xs-12 text-left">
+                            <input value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn btn-default btn-lg btn-subscribe" ga-on="click" ga-event-category="Newsletter" ga-event-action="Signup" ga-event-label="General-Newsletter-Signup" type="submit">
+                        </div>
+                    </div>
+                    <div style="position: absolute; left: -5000px;">
+                        <input name="b_90b216fdbe02b25619ec94fc3_bc2bb312cd" tabindex="-1" type="text">
+                    </div>
+                </form>
+            </div>
+            <div id="message"></div>
+        </div>
+    </div>
+</div>
+<!-- end newsletter section -->				<div class="comment-wrap">
+					<!-- start disqus comment -->
+<div class="disqus-container">
+	<div id="disqus_thread"><iframe id="dsq-app6339" name="dsq-app6339" allowtransparency="true" scrolling="no" tabindex="0" title="Disqus" style="width: 1px !important; min-width: 100% !important; border: medium none !important; overflow: hidden !important; height: 1085px !important;" src="Scaling%20Function_files/a_003.htm" horizontalscrolling="no" verticalscrolling="no" width="100%" frameborder="0"></iframe></div>
+	    <script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = disqus_shortname; // required: replace example with your forum shortname
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="<a class="vglnk" href="http://disqus.com/?ref_noscript" rel="nofollow"><span>http</span><span>://</span><span>disqus</span><span>.</span><span>com</span><span>/?</span><span>ref</span><span>_</span><span>noscript</span></a>">comments powered by Disqus.</a></noscript>
+</div>
+<!-- end disqus comment -->				</div>
+				<!-- start prev next wrap -->
+<div class="prev-next-wrap clearfix">
+		<a class="btn btn-default" href="https://stackabuse.com/python-metaclasses-and-metaprogramming/"><i class="fa fa-angle-left fa-fw"></i> Previous Post : Python Metaclasses and Metaprogramming</a>
+		&nbsp;
+        <a class="btn btn-default" href="https://stackabuse.com/single-page-apps-with-vue-js-and-flask-navigating-vue-router/">Next Post : Single Page Apps with Vue.js and Flask: Navigating Vue Router <i class="fa fa-angle-right fa-fw"></i></a>
+</div>				<!-- end post -->
+			</div>
+			<!-- end main post area -->
+			<!-- start sidebar -->
+<div class="col-md-4 sidebar">
+	<!-- start widget -->
+<div class="widget">
+	<h4 class="title">
+        Ad
+        <div class="title-inline">
+            <a class="bsa-link" rel="nofollow" target="_blank" href="https://www.buysellads.com/buy/detail/282022" ga-on="click" ga-event-category="Ad" ga-event-action="Click" ga-event-label="BSA-Link">
+                Advertise Here
+            </a>
+        </div>
+    </h4>
+    <div class="content ad" style="height:250px;">
+        <!-- BuySellAds Zone Code -->
+<div id="bsap_1307264" class="bsap bsap_1307264" data-serve="CKYD6KJW">
+<style type="text/css">
+div.bsap_1307264{width:100%;display:block;}div.bsap_1307264 a{width:300px;}div.bsap_1307264 a img{padding:0;}div.bsap_1307264 a em{font-style:normal;}div.bsap_1307264 a{display:block;font-size:11px;color:#888;font-family:verdana,sans-serif;margin:0;text-align:center;text-decoration:none;overflow:hidden;float:left;}
+div.bsap_1307264 img{border:0;clear:right;}
+div.bsap_1307264 a.adhere{color:#666;font-weight:bold;font-size:12px;border:1px solid #ccc;background:#e7e7e7;text-align:center;}
+div.bsap_1307264 a.adhere:hover{border:1px solid #999;background:#ddd;color:#333;}
+div.bsap_1307264 iframe{display:block;font-size:11px;color:#888;font-family:verdana,sans-serif;margin:0;text-align:center;text-decoration:none;overflow:hidden;float:left;}div.bsap_1307264 a{line-height:100%;}div.bsap_1307264 a.adhere{width:300px;height:250px;line-height:2000%;}html>body div.bsap_1307264 a.adhere{width:298px;height:248px;}div.bsap_1307264 img.s{height:0;width:0;}div.bsap_1307264{line-height:9px;}div.bsap_1307264 .bsap_adhere a{height:19px !important;width:298px !important;font-size:10px;background:#f1f1f1;border:1px solid #e1e1e1;border-top:none;border-radius: 0 0 2px 2px;line-height:16px;}.bsap_backfillframe{border:0;}
+</style>
+<!--INLINE-->
+<style>
+    .bsa-backfill { width: 300; height: 250; }
+</style>
+<script type="text/javascript" id="auto_5" class="ignoreme" src="Scaling%20Function_files/adsbygoogle.js"></script>
+<!-- sa-responsive-sidebar-top -->
+<ins class="adsbygoogle bsa-backfill" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-5704119028142803" data-ad-slot="3540485884" data-page-url="http://stackabuse.com" data-adsbygoogle-status="done"><ins id="aswift_1_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent;"><ins id="aswift_1_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent;"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;width:300px;height:250px;" width="300" height="250" frameborder="0"></iframe></ins></ins></ins>
+<script type="text/javascript" id="auto_6" class="ignoreme">
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script type="text/javascript" id="auto_7" class="ignoreme"> if (typeof(_bsap_serving_callback) !== 'undefined') _bsap_serving_callback(72544, 'CKYD6KJW', ''); </script>
+<script type="text/javascript" id="auto_8" class="ignoreme"> if (typeof(BSACallback) !== 'undefined') BSACallback(); </script></div>
+<!-- End BuySellAds Zone Code -->    </div>
+</div>
+<!-- end widget -->	<!-- start widget -->
+<div class="widget">
+	<h4 class="title">Recent Posts</h4>
+	<div class="content recent-post"><div class="recent-single-post"><a href="https://stackabuse.com/how-to-convert-a-string-to-date-in-java/" class="post-title">How to Convert a String to Date in Java</a><div class="date">September 28, 2018</div></div><div class="recent-single-post"><a href="https://stackabuse.com/docker-a-high-level-introduction/" class="post-title">Docker: A High Level Introduction</a><div class="date">September 27, 2018</div></div><div class="recent-single-post"><a href="https://stackabuse.com/creating-a-neural-network-from-scratch-in-python/" class="post-title">Creating a Neural Network from Scratch in Python</a><div class="date">September 26, 2018</div></div></div>
+</div>
+<!-- end widget -->	<!-- start tag cloud widget -->
+<div class="widget">
+	<h4 class="title">Newsletter</h4>
+	<div class="content newsletter">
+		<p>Subscribe to our newsletter</p>
+		<div id="mc_embed_signup">
+			<form action="#" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" novalidate="" target="_blank">
+				<div class="input-group">
+					<input name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email..." type="email">
+				</div>
+				<div style="position: absolute; left: -5000px;">
+				<input name="b_90b216fdbe02b25619ec94fc3_bc2bb312cd" tabindex="-1" type="text">
+				</div>
+				<div class="input-group">
+					<input value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn btn-default" ga-on="click" ga-event-category="Newsletter" ga-event-action="Signup" ga-event-label="General-Newsletter-Signup" type="submit">
+				</div>
+			</form>
+		</div>
+		<div id="message"></div>
+	</div>
+</div>
+<!-- end tag cloud widget -->    <!-- start widget -->
+<div class="widget">
+    <h4 class="title">
+        Ad
+        <div class="title-inline">
+            <a class="bsa-link" rel="nofollow" target="_blank" href="https://www.buysellads.com/buy/detail/282022" ga-on="click" ga-event-category="Ad" ga-event-action="Click" ga-event-label="BSA-Link">
+                Advertise Here
+            </a>
+        </div>
+    </h4>
+    <div class="content ad" style="height:250px;">
+        <!-- BuySellAds Zone Code -->
+<div id="bsap_1307384" class="bsap bsap_1307384" data-serve="CKYDC2JI">
+<style type="text/css">
+div.bsap_1307384{width:100%;display:block;}div.bsap_1307384 a{width:300px;}div.bsap_1307384 a img{padding:0;}div.bsap_1307384 a em{font-style:normal;}div.bsap_1307384 a{display:block;font-size:11px;color:#888;font-family:verdana,sans-serif;margin:0;text-align:center;text-decoration:none;overflow:hidden;float:left;}
+div.bsap_1307384 img{border:0;clear:right;}
+div.bsap_1307384 a.adhere{color:#666;font-weight:bold;font-size:12px;border:1px solid #ccc;background:#e7e7e7;text-align:center;}
+div.bsap_1307384 a.adhere:hover{border:1px solid #999;background:#ddd;color:#333;}
+div.bsap_1307384 iframe{display:block;font-size:11px;color:#888;font-family:verdana,sans-serif;margin:0;text-align:center;text-decoration:none;overflow:hidden;float:left;}div.bsap_1307384 a{line-height:100%;}div.bsap_1307384 a.adhere{width:300px;height:250px;line-height:2000%;}html>body div.bsap_1307384 a.adhere{width:298px;height:248px;}div.bsap_1307384 img.s{height:0;width:0;}div.bsap_1307384{line-height:9px;}div.bsap_1307384 .bsap_adhere a{height:19px !important;width:298px !important;font-size:10px;background:#f1f1f1;border:1px solid #e1e1e1;border-top:none;border-radius: 0 0 2px 2px;line-height:16px;}.bsap_backfillframe{border:0;}
+</style>
+<!--INLINE-->
+<style>
+    #bsa-sidebar-bottom { width: 300; height: 250; }
+</style>
+<script type="text/javascript" id="auto_9" class="ignoreme" src="Scaling%20Function_files/adsbygoogle.js"></script>
+<!-- sa-responsive-sidebar-bottom -->
+<ins id="bsa-sidebar-bottom" class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-5704119028142803" data-ad-slot="4739863398" data-page-url="http://stackabuse.com" data-adsbygoogle-status="done"><ins id="aswift_2_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent;"><ins id="aswift_2_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent;"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_2" name="aswift_2" style="left:0;position:absolute;top:0;width:300px;height:250px;" width="300" height="250" frameborder="0"></iframe></ins></ins></ins>
+<script type="text/javascript" id="auto_10" class="ignoreme">
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script type="text/javascript" id="auto_11" class="ignoreme"> if (typeof(_bsap_serving_callback) !== 'undefined') _bsap_serving_callback(73653, 'CKYDC2JI', ''); </script>
+<script type="text/javascript" id="auto_12" class="ignoreme"> if (typeof(BSACallback) !== 'undefined') BSACallback(); </script></div>
+<!-- End BuySellAds Zone Code -->    </div>
+</div>
+<!-- end widget -->    <div class="widget-sticky" style="position: fixed; top: 25px; width: 685px;">
+        <!-- start widget -->
+<div class="widget">
+    <a rel="nofollow" target="_blank" class="dcp-link" href="http://stackabu.se/daily-coding-problem" style="text-decoration: none;" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="DCP-Link">
+        <h4 class="title">Interviewing for a job?</h4>
+    </a>
+    <div class="content product">
+        <style type="text/css">
+            #product-features li {
+                margin: 5px 0;
+            }
+        </style>
+        <div id="product-features" style="font-size: 16px;line-height: 1.7em;">
+            <ul style="list-style: initial;">
+                <li>
+                    Improve your skills by solving one coding problem every day
+                </li>
+                <li>
+                    Get the solutions the next morning via email
+                </li>
+                <li>
+                    Practice on <strong>actual problems</strong> asked by top companies, like:
+                    <div style="margin: 15px 0px;">
+                        <img src="Scaling%20Function_files/logo-google.svg" style="height: 18px;">
+                        &nbsp;
+                        <img src="Scaling%20Function_files/logo-facebook.svg" style="height: 14px;margin-bottom: 3px;">
+                        &nbsp;
+                        <img src="Scaling%20Function_files/logo-amazon.svg" style="height: 20px;">
+                        &nbsp;
+                        <img src="Scaling%20Function_files/logo-microsoft.svg" style="height: 20px;">
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <a rel="nofollow" target="_blank" class="btn btn-default dcp-link" href="http://stackabu.se/daily-coding-problem" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="DCP-Link">
+                    <i class="fa fa-code"></i>
+                    &nbsp;
+                    Daily Coding Problem
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end widget -->        <!-- start widget -->
+<div class="widget">
+    <h4 class="title">Courses</h4>
+    <div class="content courses">
+        <ul id="node-courses" style="display: none;">
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/complete-node-dev-course" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    The Complete Node.js Developer Course
+                    <br>
+                    <div class="course-tag">Node.js</div>
+                    <div class="course-meta">77,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/node-react-fullstack-web-development" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Node with React: Fullstack Web Development
+                    <br>
+                    <div class="course-tag">Node.js</div>
+                    <div class="course-tag">React</div>
+                    <div class="course-meta">30,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/javascript-understanding-the-weird-parts" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    JavaScript: Understanding the Weird Parts
+                    <br>
+                    <span class="course-tag">JavaScript</span>
+                    <div class="course-meta">106,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+        </ul>
+        <ul id="python-courses" style="display: none;">
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/complete-python-bootcamp" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Complete Python Bootcamp: Go from zero to hero in Python
+                    <br>
+                    <div class="course-tag">Python</div>
+                    <div class="course-meta">293,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/complete-python-masterclass" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Complete Python Masterclass
+                    <br>
+                    <div class="course-tag">Python</div>
+                    <div class="course-meta">80,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/learning-python-data-analysis-visualization" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Learning Python for Data Analysis and Visualization
+                    <br>
+                    <span class="course-tag">Python</span>
+                    <span class="course-tag">Data Science</span>
+                    <div class="course-meta">72,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+        </ul>
+        <ul id="ml-courses" style="">
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/python-data-science-machine-learning-bootcamp" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Python for Data Science and Machine Learning Bootcamp
+                    <br>
+                    <div class="course-tag">Python</div>
+                    <div class="course-tag">Machine Learning</div>
+                    <div class="course-meta">122,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/machine-learning-hands-on-python-data-science" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Machine Learning A-Z: Hands-On Python &amp; R In Data Science
+                    <br>
+                    <div class="course-tag">Python</div>
+                    <div class="course-tag">Machine Learning</div>
+                    <div class="course-meta">254,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/complete-guide-tensorflow-deep-learning-python" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Complete Guide to TensorFlow for Deep Learning with Python
+                    <br>
+                    <span class="course-tag">Python</span>
+                    <div class="course-tag">Machine Learning</div>
+                    <div class="course-meta">32,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+        </ul>
+        <ul id="vue-courses" style="display: none;">
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/vue-js-2-complete-guide" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Vue JS 2 - The Complete Guide
+                    <br>
+                    <div class="course-tag">JavaScript</div>
+                    <div class="course-tag">Vue.js</div>
+                    <div class="course-meta">49,000+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/ultimate-vue-js-2-developers-course" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    The Ultimate Vue JS 2 Developers Course
+                    <br>
+                    <div class="course-tag">JavaScript</div>
+                    <div class="course-tag">Vue.js</div>
+                    <div class="course-meta">4,600+ students enrolled</div>
+                </a>
+                <hr>
+            </li>
+            <li>
+                <a class="udemy-link" rel="nofollow" target="_blank" href="http://stackabu.se/vue-js-2-beginner-to-pro" ga-on="click" ga-event-category="Affiliate" ga-event-action="Click" ga-event-label="Udemy-Link">
+                    Vue JS 2: From Beginner to Professional
+                    <br>
+                    <span class="course-tag">JavaScript</span>
+                    <div class="course-tag">Vue.js</div>
+                    <div class="course-meta">4.7/5 Rating</div>
+                </a>
+                <hr>
+            </li>
+        </ul>
+    </div>
+    <script>
+        $(document).ready(function() {
+            var tags = [];
+            if ($('.tag-list').length === 1) {
+                $('.tag-list a').each(function(t) {
+                    tags.push($(this).text());
+                });
+            }
+
+            var topic = '';
+
+            if (tags.length === 0) {
+                topic = 'python';
+            } else {
+                if ($.inArray('machine learning', tags) > -1) { topic = 'machine-learning'; }
+                else if ($.inArray('vue', tags) > -1) { topic = 'vue'; }
+                else if ($.inArray('python', tags) > -1) { topic = 'python'; }
+                else { topic = 'node'; }
+            }
+
+            if (topic === 'machine-learning') {
+                $('#node-courses').hide();
+                $('#python-courses').hide();
+                $('#ml-courses').show();
+                $('#vue-courses').hide();
+            } else if (topic === 'vue') {
+                $('#node-courses').hide();
+                $('#python-courses').hide();
+                $('#ml-courses').hide();
+                $('#vue-courses').show();
+            } else if (topic === 'python') {
+                $('#node-courses').hide();
+                $('#python-courses').show();
+                $('#ml-courses').hide();
+                $('#vue-courses').hide();
+            }
+        });
+    </script>
+
+    <!-- <script>
+        $(document).ready(function() {
+            var courses = {
+                node: [
+                    {
+                        url: 'http://stackabu.se/learn-and-understand-node',
+                        title: 'Learn and Understand Node.js'
+                    },
+                    {
+                        url: 'http://stackabu.se/complete-node-dev-course',
+                        title: 'The Complete Node.js Developer Course'
+                    },
+                    {
+                        url: 'http://stackabu.se/introduction-node-beginners',
+                        title: 'Introduction to Node.js for Beginners'
+                    }
+                ],
+                python: [],
+                unix: [],
+                ml: []
+            };
+            var tags = [];
+            if ($('.tag-list').length === 1) {
+                $('.tag-list a').each(function(t) {
+                    tags.push($(this).text());
+                });
+            }
+
+            var topic = '';
+
+            if (tags.length === 0) {
+                topic = 'node';
+            } else {
+                if ($.inArray('machine learning', tags) > -1) { topic = 'ml'; }
+                else if ($.inArray('node', tags) > -1) { topic = 'node'; }
+                else if ($.inArray('python', tags) > -1) { topic = 'python'; }
+                else if ($.inArray('unix', tags) > -1) { topic = 'unix'; }
+                else { topic = 'node'; }
+            }
+
+            var code = '';
+            code += '<li><a rel="nofollow" target="_blank" href="' + listing.url + '" ' +
+                'ga-on="click"' +
+                'ga-event-category="Affiliate" ' + 
+                'ga-event-action="Click" ' +
+                'ga-event-label="Udemy-Link"' +
+                '>';
+            code += listing.jobtitle;
+            code += '<br />';
+            code += '<div class="course-tag">' + listing.company + '</div>';
+            code += '<div class="course-meta">' + listing.formattedLocation + '</div>';
+            if (search_response.results.length === (i+1)) {
+                code += '</a></li>';
+            } else {
+                code += '</a><hr></li>';
+            }
+        });
+    </script> -->
+</div>
+<!-- end widget -->    </div>
+</div>
+<!-- end sidebar -->		</div>
+	</div>
+</section>
+<!-- end site's main content area -->
+
+	<!-- start main-footer -->
+	<footer class="main-footer">
+		<div class="container">
+			<div class="row">
+				<!-- start first footer widget area -->
+				<div class="col-sm-4">
+					<!-- start widget -->
+<div class="widget">
+	<h4 class="title">Recent Posts</h4>
+	<div class="content recent-post"><div class="recent-single-post"><a href="https://stackabuse.com/how-to-convert-a-string-to-date-in-java/" class="post-title">How to Convert a String to Date in Java</a><div class="date">September 28, 2018</div></div><div class="recent-single-post"><a href="https://stackabuse.com/docker-a-high-level-introduction/" class="post-title">Docker: A High Level Introduction</a><div class="date">September 27, 2018</div></div><div class="recent-single-post"><a href="https://stackabuse.com/creating-a-neural-network-from-scratch-in-python/" class="post-title">Creating a Neural Network from Scratch in Python</a><div class="date">September 26, 2018</div></div></div>
+</div>
+<!-- end widget -->				</div>
+				<!-- end first footer widget area -->
+				<!-- start second footer widget area -->
+				<div class="col-sm-4">
+					<!-- start tag cloud widget -->
+<div class="widget">
+	<h4 class="title">Tags</h4>
+	<div class="content tag-cloud"><a href="https://stackabuse.com/tag/java">java</a><a href="https://stackabuse.com/tag/tool">tool</a><a href="https://stackabuse.com/tag/docker">docker</a><a href="https://stackabuse.com/tag/python">python</a><a href="https://stackabuse.com/tag/machine-learning">machine learning</a><a href="https://stackabuse.com/tag/interview">interview</a><a href="https://stackabuse.com/tag/review">review</a><a href="https://stackabuse.com/tag/udemy">udemy</a><a href="https://stackabuse.com/tag/data-science">data science</a><a href="https://stackabuse.com/tag/sql">sql</a><a href="https://stackabuse.com/tag/devops">devops</a><a href="https://stackabuse.com/tag/postgresql">postgresql</a></div>
+</div>
+<!-- end tag cloud widget -->				</div>
+				<!-- end second footer widget area -->
+				<!-- start third footer widget area -->
+				<div class="col-sm-4">
+					<!-- start widget -->
+<div class="widget">
+	<h4 class="title">Follow</h4>
+	<div class="content">
+		<ul class="social">
+			<!-- start social links -->
+			<!-- replace the # with your own profile link address -->
+			<li><a href="https://twitter.com/ScottWRobinson"><i class="fa fa-twitter"></i></a></li>
+			<li><a href="https://www.facebook.com/stackabuse"><i class="fa fa-facebook"></i></a></li>
+			<!--<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+			<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+			<li><a href="#"><i class="fa fa-skype"></i></a></li>
+			<li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+			<li><a href="#"><i class="fa fa-youtube"></i></a></li>
+			<li><a href="#"><i class="fa fa-vimeo-square"></i></a></li>
+			<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+			<li><a href="#"><i class="fa fa-flickr"></i></a></li>
+			<li><a href="#"><i class="fa fa-tumblr"></i></a></li>-->
+			<li><a href="https://github.com/scottwrobinson"><i class="fa fa-github"></i></a></li>
+			<!--<li><a href="#"><i class="fa fa-instagram"></i></a></li>
+			<li><a href="#"><i class="fa fa-stack-overflow"></i></a></li>
+			<li><a href="#"><i class="fa fa-stack-exchange"></i></a></li>
+			<li><a href="#"><i class="fa fa-xing"></i></a></li>
+			<li><a href="#"><i class="fa fa-envelope"></i></a></li>-->
+			<li><a href="https://stackabuse.com/rss/"><i class="fa fa-rss"></i></a></li>
+			<!-- end social links -->
+		</ul>
+	</div>
+</div>
+<!-- end widget -->				</div>
+				<!-- end third footer widget area -->
+			</div>
+		</div>
+	</footer>
+	<!-- end main-footer -->
+	<!-- start copyright section -->
+<div class="copyright">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				Copyright © 2018, <a href="https://stackabuse.com/">Stack Abuse</a>.  All Right Reserved
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end copyright section -->	<div class="footer-links">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<a href="https://stackabuse.com/disclosure">Disclosure</a>
+					•
+					<a href="https://stackabuse.com/privacy-policy">Privacy Policy</a>
+					•
+					<a href="https://stackabuse.com/terms-of-service">Terms of Service</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<a href="#" id="back-to-top" style="display: inline;"><i class="fa fa-angle-up"></i></a>
+	<!--
+<script src="//my.hellobar.com/4dd9990be00532b0fc7961824b7d7a0930e9e2b7.js" type="text/javascript" charset="utf-8" async="async"></script>
+-->
+	<!-- scripts -->
+	<script type="text/javascript">
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+    </script>
+    <script src="Scaling%20Function_files/jquery_002.js"></script>
+	<script src="Scaling%20Function_files/jquery_003.js"></script>
+	<script src="Scaling%20Function_files/bootstrap.js"></script>
+	<script src="Scaling%20Function_files/jflickrfeed.js"></script>
+	<script src="Scaling%20Function_files/highlight.js"></script>
+	<!-- <script src="/assets/js/indeed.js?v=a1a49a4526"></script> -->
+	<script src="Scaling%20Function_files/main.js"></script>
+	<!-- <script src="//gdc.indeed.com/ads/apiresults.js" type="text/javascript"></script> -->
+	<script src="Scaling%20Function_files/raphael-min.js"></script>
+    <script src="Scaling%20Function_files/morris.js"></script>
+    <script src="Scaling%20Function_files/MathJax.js" id=""></script>
+	<!-- Add your analytic code below -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-43140675-1', 'auto');
+  ga('require', 'eventTracker');
+  ga('send', 'pageview');
+
+</script>
+<script async="" src="Scaling%20Function_files/autotrack.js"></script>
+<script src="Scaling%20Function_files/platform.js" async="" defer="defer"></script><iframe style="display: none;"></iframe><iframe id="google_osd_static_frame_3883118893797" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;"></iframe></body></html>
